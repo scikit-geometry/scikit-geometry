@@ -23,6 +23,7 @@ include(CheckCXXCompilerFlag)
 #endif()
 #string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(Python_ADDITIONAL_VERSIONS 3.4 3.5 3.6 3.7)
 if (NOT ${PYBIND11_PYTHON_VERSION} STREQUAL "")
   find_package(PythonLibs ${PYBIND11_PYTHON_VERSION} EXACT)
@@ -118,6 +119,7 @@ set(PYGAL_SOURCE
   src/pygal_arrangement.cpp
   src/pygal_principal_component_analysis.cpp
   src/pygal_minkowski.cpp
+  src/pygal_polyhedron.cpp
   # src/funcs.cpp
 )
 
