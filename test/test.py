@@ -30,10 +30,12 @@ print(barycenter(a, 2, b, 12))
 #
 # print(pygal.intersection(s, p))
 #
-# poly = pygal.Polygon([a, c, b, d])
-# print(poly)
-# print("Poly a simple: ", poly.is_simple())
-# print(poly.vertices)
+poly = pygal.Polygon([a, c, b, d])
+print(poly)
+print("Poly a simple: ", poly.is_simple())
+print(poly.vertices)
+for v in poly.vertices:
+	print(v)
 
 # h = [pygal.Point(1, 1), pygal.Point(1, 2), pygal.Point(2, 1)]
 
@@ -41,9 +43,9 @@ print(barycenter(a, 2, b, 12))
 # 	print(v)
 #
 # print(list(poly.vertices));
-# print(poly.edges)
-# for e in poly.edges:
-# 	print(e)
+print(poly.edges)
+for e in poly.edges:
+	print(e)
 # print(list(poly.edges));
 #
 # pwh = pygal.Polygon_with_holes(poly, [pygal.Polygon(h)])

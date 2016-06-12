@@ -4,8 +4,8 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/bounding_box.h>
 
-typedef double                      FT;
-typedef CGAL::Simple_cartesian<FT>  DoubleK;
+typedef double                      DoubleFT;
+typedef CGAL::Simple_cartesian<DoubleFT>  DoubleK;
 
 typedef CGAL::Cartesian_converter<Kernel,DoubleK> Kernel_To_DoubleK;
 typedef CGAL::Cartesian_converter<DoubleK,Kernel> DoubleK_To_Kernel;

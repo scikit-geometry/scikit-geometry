@@ -2,7 +2,7 @@
     pybind11/pybind11.h: Infrastructure for processing custom
     type and function attributes
 
-    Copyright (c) 2015 Wenzel Jakob <wenzel@inf.ethz.ch>
+    Copyright (c) 2016 Wenzel Jakob <wenzel.jakob@epfl.ch>
 
     All rights reserved. Use of this source code is governed by a
     BSD-style license that can be found in the LICENSE file.
@@ -18,23 +18,29 @@ template <typename T> struct arg_t;
 
 /// Annotation for keyword arguments
 struct arg {
-    arg(const char *name) : name(name) { }
-    template <typename T> arg_t<T> operator=(const T &value);
-    template <typename T, size_t N> arg_t<const T *> operator=(T const (&value)[N]);
+    constexpr arg(const char *name) : name(name) { }
+
+    template <typename T>
+    constexpr arg_t<T> operator=(const T &value) const { return {name, value}; }
+    template <typename T, size_t N>
+    constexpr arg_t<const T *> operator=(T const (&value)[N]) const {
+        return operator=((const T *) value);
+    };
+
     const char *name;
 };
 
 /// Annotation for keyword arguments with default values
 template <typename T> struct arg_t : public arg {
-    arg_t(const char *name, const T &value, const char *descr = nullptr)
+    constexpr arg_t(const char *name, const T &value, const char *descr = nullptr)
         : arg(name), value(value), descr(descr) { }
     T value;
     const char *descr;
 };
 
-template <typename T> arg_t<T> arg::operator=(const T &value) { return arg_t<T>(name, value); }
-template <typename T, size_t N> arg_t<const T *> arg::operator=(T const (&value)[N]) {
-    return operator=((const T *) value);
+inline namespace literals {
+/// String literal version of arg
+constexpr arg operator"" _a(const char *name, size_t) { return {name}; }
 }
 
 /// Annotation for methods
@@ -65,6 +71,7 @@ enum op_type : int;
 struct undefined_t;
 template <op_id id, op_type ot, typename L = undefined_t, typename R = undefined_t> struct op_;
 template <typename... Args> struct init;
+template <typename... Args> struct init_alias;
 inline void keep_alive_impl(int Nurse, int Patient, handle args, handle ret);
 
 /// Internal data structure which holds metadata about a keyword argument
@@ -92,19 +99,28 @@ struct function_record {
     std::vector<argument_record> args;
 
     /// Pointer to lambda function which converts arguments and performs the actual call
-    handle (*impl) (function_record *, handle, handle) = nullptr;
+    handle (*impl) (function_record *, handle, handle, handle) = nullptr;
 
     /// Storage for the wrapped function pointer and captured data, if any
-    void *data = nullptr;
+    void *data[3] = { };
 
     /// Pointer to custom destructor for 'data' (if needed)
-    void (*free_data) (void *ptr) = nullptr;
+    void (*free_data) (function_record *ptr) = nullptr;
 
     /// Return value policy associated with this function
     return_value_policy policy = return_value_policy::automatic;
 
     /// True if name == '__init__'
-    bool is_constructor = false;
+    bool is_constructor : 1;
+
+    /// True if the function has a '*args' argument
+    bool has_args : 1;
+
+    /// True if the function has a '**kwargs' argument
+    bool has_kwargs : 1;
+
+    /// Number of arguments
+    uint16_t nargs;
 
     /// Python method object
     PyMethodDef *def = nullptr;
@@ -233,11 +249,17 @@ struct process_attribute<arg_t<T>> : process_attribute_default<arg_t<T>> {
 #if !defined(NDEBUG)
             std::string descr(typeid(T).name());
             detail::clean_type_id(descr);
-            if (r->class_)
-                descr += " in method of " + (std::string) r->class_.str();
+            descr = "'" + std::string(a.name) + ": " + descr + "'";
+            if (r->class_) {
+                if (r->name)
+                    descr += " in method '" + (std::string) r->class_.str() + "." + (std::string) r->name + "'";
+                else
+                    descr += " in method of '" + (std::string) r->class_.str() + "'";
+            } else if (r->name) {
+                descr += " in function named '" + (std::string) r->name + "'";
+            }
             pybind11_fail("arg(): could not convert default keyword argument "
-                          "of type " + descr +
-                          " into a Python object (type not registered yet?)");
+                          + descr + " into a Python object (type not registered yet?)");
 #else
             pybind11_fail("arg(): could not convert default keyword argument "
                           "into a Python object (type not registered yet?). "
@@ -298,6 +320,19 @@ template <typename... Args> struct process_attributes {
         ignore_unused(unused);
     }
 };
+
+/// Compile-time integer sum
+constexpr size_t constexpr_sum() { return 0; }
+template <typename T, typename... Ts>
+constexpr size_t constexpr_sum(T n, Ts... ns) { return n + constexpr_sum(ns...); }
+
+/// Check the number of named arguments at compile time
+template <typename... Extra,
+          size_t named = constexpr_sum(std::is_base_of<arg, Extra>::value...),
+          size_t self  = constexpr_sum(std::is_same<is_method, Extra>::value...)>
+constexpr bool expected_num_args(size_t nargs) {
+    return named == 0 || (self + named) == nargs;
+}
 
 NAMESPACE_END(detail)
 NAMESPACE_END(pybind11)

@@ -18,7 +18,6 @@ void make_polygon_with_holes(Polygon_with_holes_2 & poly, Polygon_2 outer, std::
     new (&poly) Polygon_with_holes_2(outer, holes.begin(), holes.end());
 };
 
-
 CGAL::Bounded_side on_side(Polygon_2 & poly, Point_2 & point) {
     return CGAL::bounded_side_2(poly.vertices_begin(), poly.vertices_end(), point, Kernel());
 }

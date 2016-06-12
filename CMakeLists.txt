@@ -120,6 +120,8 @@ set(PYGAL_SOURCE
   src/pygal_principal_component_analysis.cpp
   src/pygal_minkowski.cpp
   src/pygal_polyhedron.cpp
+  src/pygal_aabb_tree.cpp
+  src/pygal_3D_minkowski.cpp
   # src/funcs.cpp
 )
 

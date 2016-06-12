@@ -5,12 +5,15 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Polyhedron_3<Kernel>                  Polyhedron_3;
+typedef typename Polyhedron_3::Halfedge             PolyhedronHalfedge;
 typedef typename Polyhedron_3::Halfedge_handle      PolyhedronHalfedge_handle;
 typedef typename Polyhedron_3::Halfedge_iterator    PolyhedronHalfedge_iterator;
+typedef typename Polyhedron_3::Halfedge_around_facet_circulator Halfedge_facet_circulator;
 
+typedef typename Polyhedron_3::Vertex           PolyhedronVertex;
 typedef typename Polyhedron_3::Vertex_handle    PolyhedronVertex_handle;
 typedef typename Polyhedron_3::Vertex_iterator  PolyhedronVertex_iterator;
-typedef typename Polyhedron_3::Facet_handle     PolyhedronFacet_iterator;
+typedef typename Polyhedron_3::Facet            PolyhedronFacet;
 typedef typename Polyhedron_3::Facet_handle     PolyhedronFacet_handle;
 typedef typename Polyhedron_3::Point_iterator   PolyhedronPoint_iterator;
 typedef typename Polyhedron_3::Edge_iterator    PolyhedronEdge_iterator;
@@ -23,17 +26,43 @@ typedef typename Kernel::Point_3 Point_3;
 Polyhedron_3 polyhedron_from_string(std::string& str) {
     Polyhedron_3 res;
     importOBJ(str, &res);
-    for (auto v = res.vertices_begin(); v != res.vertices_end(); ++v)
-        std::cout << v->point() << std::endl;
-
     return res;
 }
 
+namespace pybind11 { namespace detail {
+
+template <> class type_caster<PolyhedronVertex_handle> : public type_caster_cgal_handle<PolyhedronVertex, PolyhedronVertex_handle> { };
+template <> class type_caster<PolyhedronHalfedge_handle> : public type_caster_cgal_handle<PolyhedronHalfedge, PolyhedronHalfedge_handle> { };
+template <> class type_caster<PolyhedronFacet_handle> : public type_caster_cgal_handle<PolyhedronFacet, PolyhedronFacet_handle> { };
+// template <> class type_caster<Vertex_handle> : public type_caster_cgal_handle<Vertex, Vertex_handle> { };
+
+}}
+
 void init_polyhedron(py::module &m) {
 
+    py::class_<PolyhedronVertex, PolyhedronVertex_handle>(m, "PolyhedronVertex")
+        .def("point", (Point_3& (PolyhedronVertex::*)()) &PolyhedronVertex::point)
+    ;
+    py::class_<PolyhedronHalfedge, PolyhedronHalfedge_handle>(m, "PolyhedronHalfedge")
+        .def("next", static_cast<PolyhedronHalfedge_handle (PolyhedronHalfedge::*)()>(&PolyhedronHalfedge::next))
+        .def("vertex", static_cast<PolyhedronVertex_handle (PolyhedronHalfedge::*)()>(&PolyhedronHalfedge::vertex))
+    ;
+    py::class_<PolyhedronFacet, PolyhedronFacet_handle>(m, "PolyhedronFacet")
+        .def("halfedge", static_cast<PolyhedronHalfedge_handle (PolyhedronFacet::*)()>(&PolyhedronFacet::halfedge))
+        .def_property_readonly("halfedges", [](PolyhedronFacet_handle& facet) {
+            auto begin = facet->facet_begin()++;
+            return py::make_iterator(begin, facet->facet_begin());
+        })
+        .def("plane", static_cast<Plane_3& (PolyhedronFacet::*)()>(&PolyhedronFacet::plane))
+        .def("is_triangle", &PolyhedronFacet::is_triangle)
+        .def("is_quad", &PolyhedronFacet::is_quad)
+        .def("facet_degree", &PolyhedronFacet::facet_degree)
+        .def("set_halfedge", &PolyhedronFacet::set_halfedge)
+    ;
+
     py::class_<Polyhedron_3>(m, "Polyhedron_3", Polyhedron_3_doc)
+        .def(py::init<>())
         .def(py::init<Polyhedron_3>())
-        // .def(init<optional<const kernel&>>())
         // .def(init<size_t, size_t, size_t, optional<const kernel&>>())
         .def("reserve", &Polyhedron_3::reserve,reserve_doc)
         .def("make_tetrahedron", (PolyhedronHalfedge_handle (Polyhedron_3::*)()) &Polyhedron_3::make_tetrahedron,make_tetrahedron_doc)
@@ -83,9 +112,11 @@ void init_polyhedron(py::module &m) {
         .def("normalize_border", &Polyhedron_3::normalize_border,normalize_border_doc)
         .def("inside_out", &Polyhedron_3::inside_out,inside_out_doc)
         // .def("is_valid", &Polyhedron_3::is_valid, is_valid_overloads_0_2(is_valid_doc))
-		// .add_property("vertices", &py_vertices<Vertex_iterator,Vertex_handle,Polyhedron_3>)
-		// .add_property("facets", &py_facets<Facet_iterator,Facet_handle,Polyhedron_3>)
-		// .add_property("points", &py_points<Point_iterator,Polyhedron_3>)
+        .def_property_readonly("vertices", [](Polyhedron_3& p) { return py::make_iterator(p.vertices_begin(), p.vertices_end()); })
+        .def_property_readonly("facets", [](Polyhedron_3& p) { return py::make_iterator(p.facets_begin(), p.facets_end()); })
+		.def_property_readonly("halfedges", [](Polyhedron_3& p) { return py::make_iterator(p.halfedges_begin(), p.halfedges_end()); })
+		.def_property_readonly("points", [](Polyhedron_3& p) { return py::make_iterator(p.points_begin(), p.points_end()); })
+        // .add_property("facets", &py_facets<Facet_iterator,Facet_handle,Polyhedron_3>)
 		// .add_property("edges", &py_edges<Edge_iterator,Polyhedron_3>)
 		// .add_property("border_edges", &py_border_edges<Edge_iterator,Polyhedron_3>)
 		// .add_property("planes", &py_planes<Plane_iterator,Polyhedron_3>)

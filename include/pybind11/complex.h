@@ -1,7 +1,7 @@
 /*
     pybind11/complex.h: Complex number support
 
-    Copyright (c) 2015 Wenzel Jakob <wenzel@inf.ethz.ch>
+    Copyright (c) 2016 Wenzel Jakob <wenzel.jakob@epfl.ch>
 
     All rights reserved. Use of this source code is governed by a
     BSD-style license that can be found in the LICENSE file.
@@ -26,6 +26,8 @@ NAMESPACE_BEGIN(detail)
 template <typename T> class type_caster<std::complex<T>> {
 public:
     bool load(handle src, bool) {
+        if (!src)
+            return false;
         Py_complex result = PyComplex_AsCComplex(src.ptr());
         if (result.real == -1.0 && PyErr_Occurred()) {
             PyErr_Clear();

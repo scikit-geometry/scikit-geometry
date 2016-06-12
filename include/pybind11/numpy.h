@@ -1,7 +1,7 @@
 /*
-    pybind11/numpy.h: Basic NumPy support, auto-vectorization support
+    pybind11/numpy.h: Basic NumPy support, vectorize() wrapper
 
-    Copyright (c) 2015 Wenzel Jakob <wenzel@inf.ethz.ch>
+    Copyright (c) 2016 Wenzel Jakob <wenzel.jakob@epfl.ch>
 
     All rights reserved. Use of this source code is governed by a
     BSD-style license that can be found in the LICENSE file.
@@ -20,8 +20,7 @@
 #endif
 
 NAMESPACE_BEGIN(pybind11)
-
-template <typename type> struct npy_format_descriptor { };
+namespace detail { template <typename type, typename SFINAE = void> struct npy_format_descriptor { }; }
 
 class array : public buffer {
 public:
@@ -77,9 +76,15 @@ public:
 
     PYBIND11_OBJECT_DEFAULT(array, buffer, lookup_api().PyArray_Check_)
 
+    enum {
+        c_style = API::NPY_C_CONTIGUOUS_,
+        f_style = API::NPY_F_CONTIGUOUS_,
+        forcecast = API::NPY_ARRAY_FORCECAST_
+    };
+
     template <typename Type> array(size_t size, const Type *ptr) {
         API& api = lookup_api();
-        PyObject *descr = api.PyArray_DescrFromType_(npy_format_descriptor<Type>::value);
+        PyObject *descr = api.PyArray_DescrFromType_(detail::npy_format_descriptor<Type>::value);
         if (descr == nullptr)
             pybind11_fail("NumPy: unsupported buffer format!");
         Py_intptr_t shape = (Py_intptr_t) size;
@@ -104,7 +109,7 @@ public:
         if (descr == nullptr)
             pybind11_fail("NumPy: unsupported buffer format '" + info.format + "'!");
         object tmp(api.PyArray_NewFromDescr_(
-            api.PyArray_Type_, descr, info.ndim, (Py_intptr_t *) &info.shape[0],
+            api.PyArray_Type_, descr, (int) info.ndim, (Py_intptr_t *) &info.shape[0],
             (Py_intptr_t *) &info.strides[0], info.ptr, 0, nullptr), false);
         if (info.ptr && tmp)
             tmp = object(api.PyArray_NewCopy_(tmp.ptr(), -1 /* any order */), false);
@@ -120,33 +125,48 @@ protected:
     }
 };
 
-template <typename T> class array_t : public array {
+template <typename T, int ExtraFlags = array::forcecast> class array_t : public array {
 public:
     PYBIND11_OBJECT_CVT(array_t, array, is_non_null, m_ptr = ensure(m_ptr));
     array_t() : array() { }
+    array_t(const buffer_info& info) : array(info) {}
     static bool is_non_null(PyObject *ptr) { return ptr != nullptr; }
     static PyObject *ensure(PyObject *ptr) {
         if (ptr == nullptr)
             return nullptr;
         API &api = lookup_api();
-        PyObject *descr = api.PyArray_DescrFromType_(npy_format_descriptor<T>::value);
-        PyObject *result = api.PyArray_FromAny_(
-            ptr, descr, 0, 0, API::NPY_C_CONTIGUOUS_ | API::NPY_ENSURE_ARRAY_
-                            | API::NPY_ARRAY_FORCECAST_, nullptr);
+        PyObject *descr = api.PyArray_DescrFromType_(detail::npy_format_descriptor<T>::value);
+        PyObject *result = api.PyArray_FromAny_(ptr, descr, 0, 0, API::NPY_ENSURE_ARRAY_ | ExtraFlags, nullptr);
+        if (!result)
+            PyErr_Clear();
         Py_DECREF(ptr);
         return result;
     }
 };
 
-#define DECL_FMT(t, n) template<> struct npy_format_descriptor<t> { enum { value = array::API::n }; }
-DECL_FMT(int8_t, NPY_BYTE_);  DECL_FMT(uint8_t, NPY_UBYTE_); DECL_FMT(int16_t, NPY_SHORT_);
-DECL_FMT(uint16_t, NPY_USHORT_); DECL_FMT(int32_t, NPY_INT_); DECL_FMT(uint32_t, NPY_UINT_);
-DECL_FMT(int64_t, NPY_LONGLONG_); DECL_FMT(uint64_t, NPY_ULONGLONG_); DECL_FMT(float, NPY_FLOAT_);
-DECL_FMT(double, NPY_DOUBLE_); DECL_FMT(bool, NPY_BOOL_); DECL_FMT(std::complex<float>, NPY_CFLOAT_);
-DECL_FMT(std::complex<double>, NPY_CDOUBLE_);
-#undef DECL_FMT
-
 NAMESPACE_BEGIN(detail)
+
+template <typename T> struct npy_format_descriptor<T, typename std::enable_if<std::is_integral<T>::value>::type> {
+private:
+    constexpr static const int values[8] = {
+        array::API::NPY_BYTE_, array::API::NPY_UBYTE_, array::API::NPY_SHORT_,    array::API::NPY_USHORT_,
+        array::API::NPY_INT_,  array::API::NPY_UINT_,  array::API::NPY_LONGLONG_, array::API::NPY_ULONGLONG_ };
+public:
+    enum { value = values[detail::log2(sizeof(T)) * 2 + (std::is_unsigned<T>::value ? 1 : 0)] };
+    template <typename T2 = T, typename std::enable_if<std::is_signed<T2>::value, int>::type = 0>
+    static PYBIND11_DESCR name() { return _("int") + _<sizeof(T)*8>(); }
+    template <typename T2 = T, typename std::enable_if<!std::is_signed<T2>::value, int>::type = 0>
+    static PYBIND11_DESCR name() { return _("uint") + _<sizeof(T)*8>(); }
+};
+template <typename T> constexpr const int npy_format_descriptor<
+    T, typename std::enable_if<std::is_integral<T>::value>::type>::values[8];
+
+#define DECL_FMT(Type, NumPyName, Name) template<> struct npy_format_descriptor<Type> { \
+    enum { value = array::API::NumPyName }; \
+    static PYBIND11_DESCR name() { return _(Name); } }
+DECL_FMT(float, NPY_FLOAT_, "float32"); DECL_FMT(double, NPY_DOUBLE_, "float64"); DECL_FMT(bool, NPY_BOOL_, "bool");
+DECL_FMT(std::complex<float>, NPY_CFLOAT_, "complex64"); DECL_FMT(std::complex<double>, NPY_CDOUBLE_, "complex128");
+#undef DECL_FMT
 
 template  <class T>
 using array_iterator = typename std::add_pointer<T>::type;
@@ -241,7 +261,7 @@ private:
 
         while (buffer_shape_iter != buffer.shape.rend()) {
             if (*shape_iter == *buffer_shape_iter)
-                *strides_iter = static_cast<int>(*buffer_strides_iter);
+                *strides_iter = static_cast<size_t>(*buffer_strides_iter);
             else
                 *strides_iter = 0;
 
@@ -266,12 +286,12 @@ private:
 };
 
 template <size_t N>
-bool broadcast(const std::array<buffer_info, N>& buffers, int& ndim, std::vector<size_t>& shape) {
-    ndim = std::accumulate(buffers.begin(), buffers.end(), 0, [](int res, const buffer_info& buf) {
+bool broadcast(const std::array<buffer_info, N>& buffers, size_t& ndim, std::vector<size_t>& shape) {
+    ndim = std::accumulate(buffers.begin(), buffers.end(), size_t(0), [](size_t res, const buffer_info& buf) {
         return std::max(res, buf.ndim);
     });
 
-    shape = std::vector<size_t>(static_cast<size_t>(ndim), 1);
+    shape = std::vector<size_t>(ndim, 1);
     bool trivial_broadcast = true;
     for (size_t i = 0; i < N; ++i) {
         auto res_iter = shape.rbegin();
@@ -298,26 +318,26 @@ struct vectorize_helper {
     template <typename T>
     vectorize_helper(T&&f) : f(std::forward<T>(f)) { }
 
-    object operator()(array_t<Args>... args) {
+    object operator()(array_t<Args, array::c_style | array::forcecast>... args) {
         return run(args..., typename make_index_sequence<sizeof...(Args)>::type());
     }
 
-    template <size_t ... Index> object run(array_t<Args>&... args, index_sequence<Index...> index) {
+    template <size_t ... Index> object run(array_t<Args, array::c_style | array::forcecast>&... args, index_sequence<Index...> index) {
         /* Request buffers from all parameters */
         const size_t N = sizeof...(Args);
 
         std::array<buffer_info, N> buffers {{ args.request()... }};
 
         /* Determine dimensions parameters of output array */
-        int ndim = 0;
+        size_t ndim = 0;
         std::vector<size_t> shape(0);
         bool trivial_broadcast = broadcast(buffers, ndim, shape);
-                
+
         size_t size = 1;
         std::vector<size_t> strides(ndim);
         if (ndim > 0) {
             strides[ndim-1] = sizeof(Return);
-            for (int i = ndim - 1; i > 0; --i) {
+            for (size_t i = ndim - 1; i > 0; --i) {
                 strides[i - 1] = strides[i] * shape[i];
                 size *= shape[i];
             }
@@ -328,13 +348,13 @@ struct vectorize_helper {
             return cast(f(*((Args *) buffers[Index].ptr)...));
 
         array result(buffer_info(nullptr, sizeof(Return),
-            format_descriptor<Return>::value(),
+            format_descriptor<Return>::value,
             ndim, shape, strides));
 
         buffer_info buf = result.request();
         Return *output = (Return *) buf.ptr;
 
-        if(trivial_broadcast) {
+        if (trivial_broadcast) {
             /* Call the function */
             for (size_t i=0; i<size; ++i) {
                 output[i] = f((buffers[Index].size == 1
@@ -364,8 +384,8 @@ struct vectorize_helper {
     }
 };
 
-template <typename T> struct handle_type_name<array_t<T>> {
-    static PYBIND11_DESCR name() { return _("array[") + type_caster<T>::name() + _("]"); }
+template <typename T, int Flags> struct handle_type_name<array_t<T, Flags>> {
+    static PYBIND11_DESCR name() { return _("numpy.ndarray[dtype=") + type_caster<T>::name() + _("]"); }
 };
 
 NAMESPACE_END(detail)

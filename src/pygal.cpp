@@ -21,6 +21,8 @@ void init_visibility(py::module &);
 void init_principal_component_analysis(py::module &);
 void init_minkowski(py::module &);
 void init_polyhedron(py::module &);
+void init_aabb_tree(py::module & m);
+void init_3d_minkowski(py::module & m);
 
 PYBIND11_PLUGIN(pygal) {
     py::module m("pygal", "Python Geometric Algorithms Library - based on CGAL");
@@ -34,5 +36,7 @@ PYBIND11_PLUGIN(pygal) {
     init_principal_component_analysis(m);
     init_minkowski(m);
     init_polyhedron(m);
+    init_aabb_tree(m);
+    init_3d_minkowski(m);
     return m.ptr();
 }
