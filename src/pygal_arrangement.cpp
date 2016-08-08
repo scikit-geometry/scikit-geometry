@@ -66,7 +66,7 @@ py::object find_in_arrangement(Segment_Arrangement_2 & arr, Point_2 & query_poin
     else if ( (v = boost::get<Vertex_const_handle>(&obj)) ){ // located on a vertex
         return py::cast(*((Vertex_handle *)v));
     }
-    return py::object();
+    return py::none();
 }
 
 Rat_point_2 to_rat_point(Point_2 & p) {

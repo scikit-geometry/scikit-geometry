@@ -14,7 +14,7 @@ py::object intersect (T1 a, T2 b) {
 	auto result = CGAL::intersection(a, b);
 	if(!result) {
 		// return None
-		return py::object();
+		return py::none();
 	}
 	return boost::apply_visitor(Intersection_visitor(), *result);
 }

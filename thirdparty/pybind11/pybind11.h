@@ -500,7 +500,7 @@ public:
 NAMESPACE_BEGIN(detail)
 /// Generic support for creating new Python heap types
 class generic_type : public object {
-    template <typename type, typename holder_type, typename type_alias> friend class class_;
+    template <typename type, typename holder_type> friend class class_;
 public:
     PYBIND11_OBJECT_DEFAULT(generic_type, object, PyType_Check)
 protected:
@@ -520,13 +520,45 @@ protected:
         auto &internals = get_internals();
         auto tindex = std::type_index(*(rec->type));
 
-        if (internals.registered_types_cpp.find(tindex) !=
-            internals.registered_types_cpp.end())
-            std::cout << "generic_type: type \"" + std::string(rec->name) +
-                          "\" is already registered!" << std::endl;
+        // if (internals.registered_types_cpp.find(tindex) !=
+        //     internals.registered_types_cpp.end())
+        //     pybind11_fail("generic_type: type \"" + std::string(rec->name) +
+        //                   "\" is already registered!");
+
+        object name(PYBIND11_FROM_STRING(rec->name), false);
+        object scope_module;
+        if (rec->scope) {
+            scope_module = (object) rec->scope.attr("__module__");
+            if (!scope_module)
+                scope_module = (object) rec->scope.attr("__name__");
+        }
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+        /* Qualified names for Python >= 3.3 */
+        object scope_qualname;
+        if (rec->scope)
+            scope_qualname = (object) rec->scope.attr("__qualname__");
+        object ht_qualname;
+        if (scope_qualname) {
+            ht_qualname = object(PyUnicode_FromFormat(
+                "%U.%U", scope_qualname.ptr(), name.ptr()), false);
+        } else {
+            ht_qualname = name;
+        }
+#endif
+        std::string full_name = (scope_module ? ((std::string) scope_module.str() + "." + rec->name)
+                                              : std::string(rec->name));
+
+        char *tp_doc = nullptr;
+        if (rec->doc) {
+            /* Allocate memory for docstring (using PyObject_MALLOC, since
+               Python will free this later on) */
+            size_t size = strlen(rec->doc) + 1;
+            tp_doc = (char *) PyObject_MALLOC(size);
+            memcpy((void *) tp_doc, rec->doc, size);
+        }
 
         object type_holder(PyType_Type.tp_alloc(&PyType_Type, 0), false);
-        object name(PYBIND11_FROM_STRING(rec->name), false);
         auto type = (PyHeapTypeObject*) type_holder.ptr();
 
         if (!type_holder || !name)
@@ -540,35 +572,17 @@ protected:
         internals.registered_types_cpp[tindex] = tinfo;
         internals.registered_types_py[type] = tinfo;
 
-        object scope_module;
-        if (rec->scope) {
-            scope_module = (object) rec->scope.attr("__module__");
-            if (!scope_module)
-                scope_module = (object) rec->scope.attr("__name__");
-        }
-
-        std::string full_name = (scope_module ? ((std::string) scope_module.str() + "." + rec->name)
-                                              : std::string(rec->name));
         /* Basic type attributes */
         type->ht_type.tp_name = strdup(full_name.c_str());
         type->ht_type.tp_basicsize = (ssize_t) rec->instance_size;
         type->ht_type.tp_base = (PyTypeObject *) rec->base_handle.ptr();
         rec->base_handle.inc_ref();
 
-#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
-        /* Qualified names for Python >= 3.3 */
-        object scope_qualname;
-        if (rec->scope)
-            scope_qualname = (object) rec->scope.attr("__qualname__");
-        if (scope_qualname) {
-            type->ht_qualname = PyUnicode_FromFormat(
-                "%U.%U", scope_qualname.ptr(), name.ptr());
-        } else {
-            type->ht_qualname = name.ptr();
-            name.inc_ref();
-        }
-#endif
         type->ht_name = name.release().ptr();
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+        type->ht_qualname = ht_qualname.release().ptr();
+#endif
 
         /* Supported protocols */
         type->ht_type.tp_as_number = &type->as_number;
@@ -590,13 +604,7 @@ protected:
 #endif
         type->ht_type.tp_flags &= ~Py_TPFLAGS_HAVE_GC;
 
-        if (rec->doc) {
-            /* Allocate memory for docstring (using PyObject_MALLOC, since
-               Python will free this later on) */
-            size_t size = strlen(rec->doc) + 1;
-            type->ht_type.tp_doc = (char *) PyObject_MALLOC(size);
-            memcpy((void *) type->ht_type.tp_doc, rec->doc, size);
-        }
+        type->ht_type.tp_doc = tp_doc;
 
         if (PyType_Ready(&type->ht_type) < 0)
             pybind11_fail("generic_type: PyType_Ready failed!");
@@ -620,17 +628,21 @@ protected:
 
         if (ob_type == &PyType_Type) {
             std::string name_ = std::string(ht_type.tp_name) + "__Meta";
-            object type_holder(PyType_Type.tp_alloc(&PyType_Type, 0), false);
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+            object ht_qualname(PyUnicode_FromFormat(
+                "%U__Meta", ((object) attr("__qualname__")).ptr()), false);
+#endif
             object name(PYBIND11_FROM_STRING(name_.c_str()), false);
+            object type_holder(PyType_Type.tp_alloc(&PyType_Type, 0), false);
             if (!type_holder || !name)
                 pybind11_fail("generic_type::metaclass(): unable to create type object!");
 
             auto type = (PyHeapTypeObject*) type_holder.ptr();
             type->ht_name = name.release().ptr();
+
 #if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
             /* Qualified names for Python >= 3.3 */
-            type->ht_qualname = PyUnicode_FromFormat(
-                "%U__Meta", ((object) attr("__qualname__")).ptr());
+            type->ht_qualname = ht_qualname.release().ptr();
 #endif
             type->ht_type.tp_name = strdup(name_.c_str());
             type->ht_type.tp_base = ob_type;
@@ -725,7 +737,7 @@ protected:
 };
 NAMESPACE_END(detail)
 
-template <typename type, typename holder_type = std::unique_ptr<type>, typename type_alias = type>
+template <typename type, typename holder_type = std::unique_ptr<type>>
 class class_ : public detail::generic_type {
 public:
     typedef detail::instance<type, holder_type> instance_type;
@@ -747,11 +759,6 @@ public:
         detail::process_attributes<Extra...>::init(extra..., &record);
 
         detail::generic_type::initialize(&record);
-
-        if (!std::is_same<type, type_alias>::value) {
-            auto &instances = pybind11::detail::get_internals().registered_types_cpp;
-            instances[std::type_index(typeid(type_alias))] = instances[std::type_index(typeid(type))];
-        }
     }
 
     template <typename Func, typename... Extra>
@@ -785,12 +792,6 @@ public:
 
     template <typename... Args, typename... Extra>
     class_ &def(const detail::init<Args...> &init, const Extra&... extra) {
-        init.template execute<type>(*this, extra...);
-        return *this;
-    }
-
-    template <typename... Args, typename... Extra>
-    class_ &def(const detail::init_alias<Args...> &init, const Extra&... extra) {
         init.template execute<type>(*this, extra...);
         return *this;
     }
@@ -882,6 +883,11 @@ public:
         return *this;
     }
 
+    template <typename target> class_ alias() {
+        auto &instances = pybind11::detail::get_internals().registered_types_cpp;
+        instances[std::type_index(typeid(target))] = instances[std::type_index(typeid(type))];
+        return *this;
+    }
 private:
     /// Initialize holder object, variant 1: object derives from enable_shared_from_this
     template <typename T>
@@ -980,31 +986,9 @@ private:
 
 NAMESPACE_BEGIN(detail)
 template <typename... Args> struct init {
-    template <typename Base, typename Holder, typename Alias, typename... Extra,
-              typename std::enable_if<std::is_same<Base, Alias>::value, int>::type = 0>
-    void execute(pybind11::class_<Base, Holder, Alias> &class_, const Extra&... extra) const {
+    template <typename Base, typename Holder, typename... Extra> void execute(pybind11::class_<Base, Holder> &class_, const Extra&... extra) const {
         /// Function which calls a specific C++ in-place constructor
-        class_.def("__init__", [](Base *self_, Args... args) { new (self_) Base(args...); }, extra...);
-    }
-
-    template <typename Base, typename Holder, typename Alias, typename... Extra,
-              typename std::enable_if<!std::is_same<Base, Alias>::value &&
-                                       std::is_constructible<Base, Args...>::value, int>::type = 0>
-    void execute(pybind11::class_<Base, Holder, Alias> &class_, const Extra&... extra) const {
-        handle cl_type = class_;
-        class_.def("__init__", [cl_type](handle self_, Args... args) {
-                if (self_.get_type() == cl_type)
-                    new (self_.cast<Base *>()) Base(args...);
-                else
-                    new (self_.cast<Alias *>()) Alias(args...);
-            }, extra...);
-    }
-
-    template <typename Base, typename Holder, typename Alias, typename... Extra,
-              typename std::enable_if<!std::is_same<Base, Alias>::value &&
-                                      !std::is_constructible<Base, Args...>::value, int>::type = 0>
-    void execute(pybind11::class_<Base, Holder, Alias> &class_, const Extra&... extra) const {
-        class_.def("__init__", [](Alias *self, Args... args) { new (self) Alias(args...); }, extra...);
+        class_.def("__init__", [](Base *instance, Args... args) { new (instance) Base(args...); }, extra...);
     }
 };
 

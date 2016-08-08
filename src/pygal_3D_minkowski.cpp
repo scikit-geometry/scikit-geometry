@@ -9,18 +9,12 @@ typedef CGAL::Nef_polyhedron_3<Kernel>				Nef_polyhedron_3;
 
 Polyhedron_3 polyhedron_minkowski_sum_3(Polyhedron_3& p, Polyhedron_3& q) {
 	// convert Polyhedron to NEF
-	cout << "POlyhedrons called " << endl;
 	Nef_polyhedron_3 a(p);
-	cout << "Converted p" << endl;
 	Nef_polyhedron_3 b(q);
-	cout << "Converted q" << endl;
-	// cout << a << endl;
-	cout << b << endl;
 	Nef_polyhedron_3 summed = CGAL::minkowski_sum_3(a, b);
-	cout << "SUMMED DONE" << endl;
+	cout << summed << endl;
 	Polyhedron_3 result;
 	summed.convert_to_polyhedron(result);
-	cout << "RESULT \n\n\n\n\n" << endl;
 	return result;
 }
 

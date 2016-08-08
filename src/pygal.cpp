@@ -23,6 +23,8 @@ void init_minkowski(py::module &);
 void init_polyhedron(py::module &);
 void init_aabb_tree(py::module & m);
 void init_3d_minkowski(py::module & m);
+void init_voronoi_delaunay(py::module & m);
+void init_optimal_transport(py::module & m);
 
 PYBIND11_PLUGIN(pygal) {
     py::module m("pygal", "Python Geometric Algorithms Library - based on CGAL");
@@ -38,5 +40,7 @@ PYBIND11_PLUGIN(pygal) {
     init_polyhedron(m);
     init_aabb_tree(m);
     init_3d_minkowski(m);
+    init_voronoi_delaunay(m);
+    init_optimal_transport(m);
     return m.ptr();
 }

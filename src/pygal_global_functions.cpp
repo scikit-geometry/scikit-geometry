@@ -11,13 +11,13 @@ void init_global_functions(py::module &m) {
         .value("POSITIVE", CGAL::Sign::POSITIVE)
     ;
 
-    py::enum_<CGAL::Bounded_side>(m, "Bounded_side")
+    py::enum_<CGAL::Bounded_side>(m, "BoundedSide")
         .value("ON_BOUNDED_SIDE",   CGAL::Bounded_side::ON_BOUNDED_SIDE)
         .value("ON_BOUNDARY",       CGAL::Bounded_side::ON_BOUNDARY)
         .value("ON_UNBOUNDED_SIDE", CGAL::Bounded_side::ON_UNBOUNDED_SIDE)
     ;
 
-    py::enum_<CGAL::Comparison_result>(m, "Comparison_result")
+    py::enum_<CGAL::Comparison_result>(m, "ComparisonResult")
         .value("SMALLER",   CGAL::Comparison_result::SMALLER)
         .value("EQUAL",     CGAL::Comparison_result::EQUAL)
         .value("LARGER", 	CGAL::Comparison_result::LARGER)
