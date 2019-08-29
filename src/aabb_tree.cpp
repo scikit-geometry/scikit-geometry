@@ -9,28 +9,17 @@
 
 
 typedef CGAL::Polyhedron_3<Kernel>                  Polyhedron_3;
-// typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, CGAL::Default, CGAL::Tag_false> Primitive;
-// typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-// typedef CGAL::AABB_tree<Traits> AABB;
-
-// typedef std::list<Triangle_3>::iterator Iterator;
-// typedef CGAL::AABB_triangle_primitive<Kernel, Iterator> Primitive;
-// typedef CGAL::AABB_traits<Kernel, Primitive>                   AABB_triangle_traits;
-// typedef CGAL::AABB_tree<AABB_triangle_traits>                   AABB;
 
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABBTraits;
 typedef CGAL::AABB_tree<AABBTraits> Tree;
+
 typedef boost::optional<Tree::Intersection_and_primitive_id<Segment_3>::Type> Segment_intersection;
 // typedef boost::optional<Tree::Intersection_and_primitive_id<Point_3>::Type> Point_intersection;
 typedef boost::optional<Tree::Intersection_and_primitive_id<Plane_3>::Type> Plane_intersection;
+
 typedef Tree::Primitive_id Primitive_id;
-
-
-// void make_aabb(AABB& tree, std::list<Triangle_3> triangles) {
-//     new (&tree) AABB(triangles.begin(), triangles.end());
-// };
 
 void make_aabb(Tree& tree, Polyhedron_3& p) {
     new (&tree) Tree(faces(p).first, faces(p).second, p);
@@ -64,7 +53,7 @@ void init_aabb_tree(py::module & m) {
         .def("number_of_intersected_primitives", &Tree::number_of_intersected_primitives<Segment_3>)
         .def("number_of_intersected_primitives", &Tree::number_of_intersected_primitives<Line_3>)
         .def("all_intersections", &all_intersections)
-            // (bool (Polyhedron_3::*)() const)&Polyhedron_3::is_pure_bivalent
+        // (bool (Polyhedron_3::*)() const)&Polyhedron_3::is_pure_bivalent
         // .def("number_of_intersected_primitives", &AABB::number_of_intersected_primitives)
     ;
 }

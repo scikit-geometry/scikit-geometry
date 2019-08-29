@@ -6,20 +6,16 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/minkowski_sum_2.h>
-#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/connect_holes.h>
-#include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/centroid.h>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/pytypes.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
-#include <pybind11/pytypes.h>
-#include <iostream>
 
-using std::cout;
-using std::endl;
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -37,6 +33,7 @@ typedef Kernel::Ray_2                                       Ray_2;
 typedef Kernel::Iso_rectangle_2                             Iso_rectangle_2;
 typedef Kernel::Triangle_2                                  Triangle_2;
 typedef Kernel::Aff_transformation_2                        Transformation_2;
+typedef Kernel::Circle_2                                    Circle_2;
 typedef CGAL::Polygon_2<Kernel>                             Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>                  Polygon_with_holes_2;
 
@@ -56,7 +53,6 @@ typedef Kernel::Tetrahedron_3                               Tetrahedron_3;
 typedef Kernel::Triangle_3                                  Triangle_3;
 typedef Kernel::Iso_cuboid_3                                Iso_cuboid_3;
 typedef Kernel::Aff_transformation_3                        Aff_transformation_3;
-
 
 
 typedef CGAL::Partition_traits_2<Kernel>                    Traits;
@@ -86,11 +82,35 @@ typedef Segment_Arrangement_2::Face                                     Face;
 typedef Segment_Arrangement_2::Hole_iterator                            Hole_iterator;
 
 
+#define CGAL_HOLDER_HELPER(T, H)                                            \
+    template <>                                                             \
+    struct always_construct_holder<H> : always_construct_holder<void>  { }; \
+    template <>                                                             \
+    class type_caster<H>                                                    \
+        : public copyable_holder_caster<T, H> { };                          \
+                                                                            \
+    template <>                                                             \
+    struct holder_helper<H> {                                               \
+        static const T* get(const H &p) { return p.operator->(); }          \
+    };                                                                      \
+
+namespace pybind11 { namespace detail {
+    CGAL_HOLDER_HELPER(Halfedge, Halfedge_handle);
+    CGAL_HOLDER_HELPER(Vertex, Vertex_handle);
+    CGAL_HOLDER_HELPER(Face, Face_handle);
+}}
+
+
 namespace {
     // Special iterator data structure for python
-    template <typename T>
-    struct PySequenceIterator {
-        PySequenceIterator(const T & begin, const T & end, py::object ref) : begin(begin), iter(begin), end(end), ref(ref) {}
+    template <class T>
+    struct PySequenceIterator
+    {
+        PySequenceIterator(const T& begin, const T& end, py::object ref) : begin(begin), iter(begin), end(end), ref(ref)
+        {
+        }
+         
+        // , ref(ref) {}
         py::object next() {
             if (iter == end)
                 throw py::stop_iteration();
@@ -102,7 +122,7 @@ namespace {
         }
 
         py::object getitem(int i) {
-            return py::cast(begin[i]);
+            return py::cast<T>(begin[i]);
         }
 
         T begin;
@@ -133,68 +153,6 @@ namespace {
         size_t index = 0;
     };
 };
-
-namespace pybind11 { namespace detail {
-
-template <typename type, typename holder_type> class type_caster_cgal_handle : public type_caster<type> {
-public:
-    using type_caster<type>::cast;
-    using type_caster<type>::typeinfo;
-    using type_caster<type>::value;
-    using type_caster<type>::temp;
-
-    bool load(handle src, bool convert) {
-        if (!src || !typeinfo) {
-            return false;
-        } else if (src.ptr() == Py_None) {
-            value = nullptr;
-            return true;
-        } else if (PyType_IsSubtype(Py_TYPE(src.ptr()), typeinfo->type)) {
-            auto inst = (instance<type, holder_type> *) src.ptr();
-            value = (void *) inst->value;
-            holder = inst->holder;
-            return true;
-        }
-
-        if (convert) {
-            for (auto &converter : typeinfo->implicit_conversions) {
-                temp = object(converter(src.ptr(), typeinfo->type), false);
-                if (load(temp, false))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    explicit operator type*() { return this->value; }
-    explicit operator type&() { return *(this->value); }
-    explicit operator holder_type*() { return &holder; }
-
-    // Workaround for Intel compiler bug
-    // see pybind11 issue 94
-    #if defined(__ICC) || defined(__INTEL_COMPILER)
-    operator holder_type&() { return holder; }
-    #else
-    explicit operator holder_type&() { return holder; }
-    #endif
-
-
-    static handle cast(const holder_type &src, return_value_policy, handle) {
-        return type_caster_generic::cast(
-            src.operator->(), return_value_policy::take_ownership, handle(),
-            src.operator->() ? &typeid(*src.operator->()) : nullptr, &typeid(type),
-            nullptr, nullptr, &src);
-    }
-
-protected:
-    holder_type holder;
-};
-
-template <> class type_caster<Halfedge_handle> : public type_caster_cgal_handle<Halfedge, Halfedge_handle> { };
-template <> class type_caster<Face_handle> : public type_caster_cgal_handle<Face, Face_handle> { };
-template <> class type_caster<Vertex_handle> : public type_caster_cgal_handle<Vertex, Vertex_handle> { };
-
-}}
 
 template<typename T1>
 double to_double(T1 v) {

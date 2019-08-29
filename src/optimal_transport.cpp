@@ -16,27 +16,31 @@ typedef CGAL::Optimal_transportation_reconstruction_2<K>    Otr_2;
 
 typedef std::pair<INEXACT_Point, FT>                        PointMassPair;
 typedef std::vector<PointMassPair>                          PointMassList;
-typedef CGAL::First_of_pair_property_map <PointMassPair>    Point_property_map;
-typedef CGAL::Second_of_pair_property_map <PointMassPair>   Mass_property_map;
-typedef CGAL::Optimal_transportation_reconstruction_2<
-    K, Point_property_map, Mass_property_map>                 Otr_2_with_mass;
+typedef CGAL::First_of_pair_property_map<PointMassPair>     Point_property_map;
+typedef CGAL::Second_of_pair_property_map<PointMassPair>    Mass_property_map;
 
-void make_otr(Otr_2 & otr, std::vector<Point_2> points) {
+typedef CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map, Mass_property_map> Otr_2_with_mass;
+
+void make_otr(Otr_2& otr, std::vector<Point_2> points) {
     std::vector<INEXACT_Point> OTR_points;
     OTR_points.reserve(points.size());
     for(const auto& p : points)
+    {
         OTR_points.emplace_back(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
+    }
     new (&otr) Otr_2(OTR_points);
 };
 
-void make_otr_with_weights(Otr_2_with_mass & otr, std::vector<std::tuple<Point_2, double>> points) {
+void make_otr_with_weights(Otr_2_with_mass& otr, std::vector<std::tuple<Point_2, double>> points) {
     PointMassList OTR_points;
     OTR_points.reserve(points.size());
     for(const auto& p : points)
         OTR_points.push_back(
-        std::make_pair(
-            INEXACT_Point(CGAL::to_double(std::get<0>(p).x()), CGAL::to_double(std::get<0>(p).y())),
-            std::get<1>(p))
+            std::make_pair(
+                INEXACT_Point(CGAL::to_double(std::get<0>(p).x()),
+                              CGAL::to_double(std::get<0>(p).y())),
+                std::get<1>(p)
+            )
         );
     Point_property_map ppm;
     Mass_property_map mpm;
@@ -64,20 +68,26 @@ void init_optimal_transport(py::module & m) {
             segments_pygal.reserve(segments.size());
 
             for(const auto& p : isolated_points)
+            {
                 isolated_points_pygal.emplace_back(p.x(), p.y());
+            }
+
             for(const auto& s : segments)
+            {
                 segments_pygal.emplace_back(
                     Point_2(s.source().x(), s.source().y()),
                     Point_2(s.target().x(), s.target().y())
                 );
+            }
             return std::make_tuple(isolated_points_pygal, segments_pygal);
         })
         .def("relocate_all_points", &Otr_2::relocate_all_points)
     ;
+
     py::class_<Otr_2_with_mass>(sub, "OptimalTransportWithWeights")
         .def("__init__", &make_otr_with_weights)
-        .def("run", &Otr_2::run)
-        .def("output", [](const Otr_2& otr) {
+        .def("run", &Otr_2_with_mass::run)
+        .def("output", [](const Otr_2_with_mass& otr) {
             std::vector<INEXACT_Point> isolated_points;
             std::vector<INEXACT_Segment> segments;
 
@@ -91,14 +101,19 @@ void init_optimal_transport(py::module & m) {
             segments_pygal.reserve(segments.size());
 
             for(const auto& p : isolated_points)
+            {
                 isolated_points_pygal.emplace_back(p.x(), p.y());
+            }
+
             for(const auto& s : segments)
+            {
                 segments_pygal.emplace_back(
                     Point_2(s.source().x(), s.source().y()),
                     Point_2(s.target().x(), s.target().y())
                 );
+            }
             return std::make_tuple(isolated_points_pygal, segments_pygal);
         })
-        .def("relocate_all_points", &Otr_2::relocate_all_points)
+        .def("relocate_all_points", &Otr_2_with_mass::relocate_all_points)
     ;
 }

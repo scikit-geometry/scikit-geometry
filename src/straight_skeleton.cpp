@@ -1,5 +1,6 @@
 #include "pygal.hpp"
-#include <CGAL/minkowski_sum_2.h>
+
+#include <CGAL/create_offset_polygons_2.h>
 
 template <typename T1>
 std::vector<Polygon_2 *> get_offset_polygon(T1 p, double q) {

@@ -7,7 +7,7 @@ void init_convex_hull(py::module &m) {
 
 	sub.def("graham_andrew", [](const std::vector<Point_2> & in) -> std::vector<Point_2> {
 		std::vector<Point_2> out;
-		CGAL::ch_graham_andrew( in.begin(), in.end(), std::back_inserter(out) );
+		CGAL::ch_graham_andrew(in.begin(), in.end(), std::back_inserter(out));
 		return out;
 	});
 }

@@ -1,29 +1,6 @@
 #include "pygal.hpp"
 #include "funcs.hpp"
 
-struct Intersection_visitor {
-  typedef py::object result_type;
-  template<typename T>
-  result_type operator()(const T &t) const {
-    return py::cast(t);
-  }
-};
-
-template<typename T1, typename T2>
-py::object intersect (T1 a, T2 b) {
-	auto result = CGAL::intersection(a, b);
-	if(!result) {
-		// return None
-		return py::none();
-	}
-	return boost::apply_visitor(Intersection_visitor(), *result);
-}
-
-template<typename T1, typename T2>
-double sqdpy(T1 p, T2 q) {
-	return (double) CGAL::to_double(CGAL::squared_distance(p, q));
-}
-
 // Polygon_with_holes_2 minkowski_sum(Polygon_with_holes_2 a, Polygon_2 b) {
 // 	return CGAL::minkowski_sum_2(a, b);
 // }
@@ -34,10 +11,6 @@ double sqdpy(T1 p, T2 q) {
 //     return Polygon_2(pts.begin(), pts.end());
 // }
 
-template<typename T1, typename T2>
-bool do_intersect(T1 p, T2 q) {
-    return CGAL::do_intersect(p, q);
-}
 
 // Polygon_2 offset_polygon(Polygon_2 p, double offset) {
 //   PolygonPtrVector inner_offset_polygons = 
@@ -60,15 +33,103 @@ bool do_intersect(T1 p, T2 q) {
 //     // return partition_polys;
 // }
 
+struct Intersection_visitor {
+  typedef py::object result_type;
+  template<typename T>
+  result_type operator()(const T &t) const {
+    return py::cast(t);
+  }
+};
+
+template<typename T1, typename T2>
+py::object intersect (T1 a, T2 b) {
+    auto result = CGAL::intersection(a, b);
+    if(!result) {
+        return py::none();
+    }
+    return boost::apply_visitor(Intersection_visitor(), *result);
+}
+
+template<typename T1, typename T2>
+double sqdpy(T1 p, T2 q) {
+    return CGAL::to_double(CGAL::squared_distance(p, q));
+}
+
+template<typename T1, typename T2>
+bool do_intersect(T1 p, T2 q) {
+    return CGAL::do_intersect(p, q);
+}
+
+#define SINGLE_OP(T, op)       \
+    .def(py::self op double()) \
+    .def(py::self op T())      \
+    .def(double() op py::self) \
+    .def(T() op py::self)      \
+
+#define OPERATORS(T) \
+    SINGLE_OP(T, +)  \
+    SINGLE_OP(T, -)  \
+    SINGLE_OP(T, *)  \
+    SINGLE_OP(T, /)  \
+    SINGLE_OP(T, ==) \
+    SINGLE_OP(T, !=) \
+    SINGLE_OP(T, >)  \
+    SINGLE_OP(T, >=) \
+    SINGLE_OP(T, <)  \
+    SINGLE_OP(T, <=) \
+
+
 void init_pygal_kernel(py::module &m) {
-    // py::class_<CGAL::Epeck>(m, "Epeck");
-    py::class_<CGAL::Lazy_exact_nt<CGAL::Gmpq> >(m, "Lazy_exact_nt_Gmpq")
-        .def(py::init<double>());
-    // py::class_<CGAL::Gmpq>(m, "GMPQ")
-    //     .def(py::init<double>());
 
+    py::class_<Kernel::FT>(m, "FieldNumberType")
+        .def(py::init<double>())
+        OPERATORS(Kernel::FT)
+        .def("__repr__", &toString<Kernel::FT>)
+        .def("__float__", to_double<Kernel::FT>)
+    ;
 
-    py::class_<Vector_2>(m, "Vector") 
+    // py::class_<Kernel::RT>(m, "RingNumberType")
+    //     .def(py::init<double>())
+    //     OPERATORS(Kernel::RT)
+    //     .def("__repr__", &toString<Kernel::RT>)
+    //     .def("__float__", to_double<Kernel::RT>)
+    // ;
+
+    py::implicitly_convertible<py::float_, Kernel::FT>();
+    py::implicitly_convertible<py::int_, Kernel::FT>();
+
+    py::implicitly_convertible<py::float_, Kernel::RT>();
+    py::implicitly_convertible<py::int_, Kernel::RT>();
+
+    py::class_<Point_2>(m, "Point2")
+        .def(py::init<double, double>())
+        .def(py::init<int, int>())
+        .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
+        .def(py::init<Kernel::FT, Kernel::FT>())
+        .def(py::init<int, int>())
+        .def("x", &Point_2::x)
+        .def("y", &Point_2::y)
+        .def("hx", &Point_2::hx)
+        .def("hy", &Point_2::hy)
+        .def("hw", &Point_2::hw)
+        .def("dimension", &Point_2::dimension)
+        .def("bbox", &Point_2::bbox)
+        .def("transform", &Point_2::transform)
+        .def(py::self < Point_2())
+        .def(py::self <= Point_2())
+        .def(py::self > Point_2())
+        .def(py::self >= Point_2())
+        .def(py::self - Point_2())
+        .def(py::self + Vector_2())
+        .def(py::self - Vector_2())
+        .def(py::self += Vector_2())
+        .def(py::self -= Vector_2())
+        .def(py::self == Point_2())
+        .def(py::self != Point_2())
+        .def("__repr__", &toString<Point_2>)
+    ;
+
+    py::class_<Vector_2>(m, "Vector2") 
     	.def(py::init<Point_2, Point_2>())
         .def(py::init<Ray_2>())
         .def(py::init<Segment_2>())
@@ -82,15 +143,39 @@ void init_pygal_kernel(py::module &m) {
         .def("hx", &Vector_2::hx)
         .def("hy", &Vector_2::hy)
         .def("hw", &Vector_2::hw)
+        .def("transform", &Vector_2::transform)
+        .def(-py::self)
         .def(py::self * double())
-        .def(py::self + Vector_2())
-        .def(py::self - Vector_2())
         .def(double() * py::self)
         .def(py::self / double())
-        .def(-py::self)
+        .def(py::self + Vector_2())
+        .def(py::self - Vector_2())
         .def("__repr__", &toString<Vector_2>)
     ;
-    py::class_<Direction_2>(m, "Direction")
+
+    py::class_<Ray_2>(m, "Ray2") 
+        .def(py::init<Point_2, Point_2>())
+        .def(py::init<Point_2, Direction_2>())
+        .def(py::init<Point_2, Vector_2>())
+        .def(py::init<Point_2, Line_2>())
+        .def("source", &Ray_2::source)
+        .def("point", &Ray_2::point)
+        .def("direction", &Ray_2::direction)
+        .def("to_vector", &Ray_2::to_vector)
+        .def("supporting_line", &Ray_2::supporting_line)
+        .def("opposite", &Ray_2::opposite)
+        .def("is_degenerate", &Ray_2::is_degenerate)
+        .def("is_horizontal", &Ray_2::is_horizontal)
+        .def("is_vertical", &Ray_2::is_vertical)
+        .def("has_on", &Ray_2::has_on)
+        .def("collinear_has_on", &Ray_2::collinear_has_on)
+        .def("transform", &Ray_2::transform)
+        .def(py::self == Ray_2())
+        .def(py::self != Ray_2())
+        .def("__repr__", &toString<Ray_2>)
+    ;
+
+    py::class_<Direction_2>(m, "Direction2")
         .def(py::init<Vector_2>())
         .def(py::init<Line_2>())
         .def(py::init<Ray_2>())
@@ -100,6 +185,7 @@ void init_pygal_kernel(py::module &m) {
         .def("delta", &Direction_2::delta)
         .def("dx", &Direction_2::dx)
         .def("dy", &Direction_2::dy)
+        .def("counterclockwise_in_between", &Direction_2::counterclockwise_in_between)
         .def(-py::self)
         .def(py::self == Direction_2())
         .def(py::self != Direction_2())
@@ -107,63 +193,75 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self >= Direction_2())
         .def(py::self < Direction_2())
         .def(py::self > Direction_2())
-        .def("counterclockwise_in_between", &Direction_2::counterclockwise_in_between)
         .def("__repr__", &toString<Direction_2>)
     ;
 
-    py::class_<Bbox_2>(m, "Bbox")
-    	.def(py::init<double, double, double, double>())
+    py::class_<Bbox_2>(m, "Bbox2")
+    	.def(py::init<>())
+        .def(py::init<double, double, double, double>())
+        .def("xmin", &Bbox_2::xmin)
+        .def("xmax", &Bbox_2::xmax)
+        .def("ymin", &Bbox_2::ymin)
+        .def("ymax", &Bbox_2::ymax)
+        .def("min", &Bbox_2::min)
+        .def("max", &Bbox_2::max)
+        .def("dilate", &Bbox_2::dilate)
+        .def("dimension", &Bbox_2::dimension)
+        .def("__repr__", &toString<Bbox_2>)
+        .def(py::self + Bbox_2())
+        .def(py::self += Bbox_2())
+        .def(py::self == Bbox_2())
+        .def(py::self != Bbox_2())
     ;
 
-    py::class_<Line_2>(m, "Line")
-    	.def(py::init<Point_2, Point_2>())
-    	.def(py::init<Segment_2>())
-    	.def(py::init<Point_2, Direction_2>())
+    m.def("do_overlap", py::overload_cast<const Bbox_2&, const Bbox_2&>(&CGAL::do_overlap));
+
+    py::class_<Line_2>(m, "Line2")
+        // TODO check if RT != double
+        // .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
     	.def(py::init<double, double, double>())
+    	.def(py::init<Point_2, Point_2>())
+    	.def(py::init<Point_2, Direction_2>())
+        .def(py::init<Point_2, Vector_2>())
+    	.def(py::init<Segment_2>())
     	.def(py::init<Ray_2>())
-        .def("__repr__", &toString<Line_2>)
-        .def("to_vector", &Line_2::to_vector)
+
+        .def("a", &Line_2::a)
+        .def("b", &Line_2::b)
+        .def("c", &Line_2::c)
+        .def("point", py::overload_cast<int>(&Line_2::point, py::const_))
+        .def("projection", &Line_2::projection)
         .def("x_at_y", &Line_2::x_at_y)
         .def("y_at_x", &Line_2::y_at_x)
+
+        .def("is_degenerate", &Line_2::is_degenerate)
+        .def("is_horizontal", &Line_2::is_horizontal)
+        .def("is_vertical", &Line_2::is_vertical)
+        .def("oriented_side", &Line_2::oriented_side)
+
+        .def("has_on", &Line_2::has_on)
+        .def("has_on_positive_side", &Line_2::has_on_positive_side)
+        .def("has_on_negative_side", &Line_2::has_on_negative_side)
+
         .def("to_vector", &Line_2::to_vector)
         .def("direction", &Line_2::direction)
         .def("opposite", &Line_2::opposite)
         .def("perpendicular", &Line_2::perpendicular)
         .def("transform", &Line_2::transform)
-        .def("is_horizontal", &Line_2::is_horizontal)
-        .def("is_vertical", &Line_2::is_vertical)
-        .def("is_degenerate", &Line_2::is_degenerate)
-        .def("has_on", &Line_2::has_on)
-        .def("has_on_positive_side", &Line_2::has_on_positive_side)
-        .def("has_on_negative_side", &Line_2::has_on_negative_side)
+
         .def(py::self == Line_2())
         .def(py::self != Line_2())
+
+        .def("__repr__", &toString<Line_2>)
     ;
 
-    py::class_<Point_2>(m, "Point")
-        .def(py::init<double, double>())
-        .def("x", &Point_2::x)
-        .def("y", &Point_2::y)
-        .def("hx", &Point_2::hx)
-        .def("hy", &Point_2::hy)
-        .def("hw", &Point_2::hw)
-        .def("dimension", &Point_2::dimension)
-        .def("bbox", &Point_2::bbox)
-        .def(py::self - Point_2())
-        .def(py::self + Vector_2())
-        .def(py::self - Vector_2())
-        .def(py::self == Point_2())
-        .def(py::self != Point_2())
-        .def("__repr__", &toString<Point_2>)
-    ;
-
-    py::class_<Iso_rectangle_2>(m, "Iso_Rectangle")
+    py::class_<Iso_rectangle_2>(m, "IsoRectangle2")
         .def(py::init<Point_2, Point_2>())
         .def(py::init<Point_2, Point_2, Point_2, Point_2>())
         .def(py::init<Point_2, Point_2, int>())
         .def(py::init<Bbox_2>())
+
         .def("vertex", &Iso_rectangle_2::vertex)
-        .def("__getitem__", &Iso_rectangle_2::vertex)
         .def("min", &Iso_rectangle_2::min)
         .def("max", &Iso_rectangle_2::max)
         .def("xmin", &Iso_rectangle_2::xmin)
@@ -175,29 +273,23 @@ void init_pygal_kernel(py::module &m) {
         .def("transform", &Iso_rectangle_2::transform)
         .def("min_coord", &Iso_rectangle_2::min_coord)
         .def("max_coord", &Iso_rectangle_2::max_coord)
+
         .def("is_degenerate", &Iso_rectangle_2::is_degenerate)
         .def("bounded_side", &Iso_rectangle_2::bounded_side)
         .def("has_on_boundary", &Iso_rectangle_2::has_on_boundary)
         .def("has_on_bounded_side", &Iso_rectangle_2::has_on_bounded_side)
         .def("has_on_unbounded_side", &Iso_rectangle_2::has_on_unbounded_side)
+
+        .def("__getitem__", &Iso_rectangle_2::vertex)
+        .def("__repr__", &toString<Iso_rectangle_2>)
+
         .def(py::self == Iso_rectangle_2())
         .def(py::self != Iso_rectangle_2())
-        .def("__repr__", &toString<Iso_rectangle_2>)
     ;
 
-
-	py::class_<CGAL::Rotation>(m, "Rotation");
-	py::class_<CGAL::Translation>(m, "Translation");
-	py::class_<CGAL::Scaling>(m, "Scaling");
-	py::class_<CGAL::Reflection>(m, "Reflection");
-
-	m.attr("ROTATION") = py::cast(CGAL::ROTATION);
-	m.attr("TRANSLATION") = py::cast(CGAL::TRANSLATION);
-	m.attr("SCALING") = py::cast(CGAL::SCALING);
-	m.attr("REFLECTION") = py::cast(CGAL::REFLECTION);
-
-    py::class_<Segment_2>(m, "Segment")
+    py::class_<Segment_2>(m, "Segment2")
         .def(py::init<Point_2, Point_2>())
+
         .def("source", &Segment_2::source)
         .def("target", &Segment_2::target)
         .def("squared_length", &Segment_2::squared_length)
@@ -208,20 +300,52 @@ void init_pygal_kernel(py::module &m) {
         .def("direction", &Segment_2::direction)
         .def("to_vector", &Segment_2::to_vector)
         .def("opposite", &Segment_2::opposite)
+
         .def("is_degenerate", &Segment_2::is_degenerate)
         .def("is_horizontal", &Segment_2::is_horizontal)
         .def("is_vertical", &Segment_2::is_vertical)
+
         .def("has_on", &Segment_2::has_on)
-        .def("bbox", &Segment_2::bbox)
         .def("collinear_has_on", &Segment_2::collinear_has_on)
+
+        .def("bbox", &Segment_2::bbox)
         .def("transform", &Segment_2::transform)
         .def("__repr__", &toString<Segment_2>)
         .def("__getitem__", &Segment_2::operator[])
+
         .def(py::self == Segment_2())
         .def(py::self != Segment_2())
     ;
 
-    py::class_<Transformation_2>(m, "Transformation")
+    py::class_<Circle_2>(m, "Circle2") 
+        .def(py::init<Point_2, Kernel::FT, CGAL::Orientation>())
+        .def(py::init<Point_2, Point_2, Point_2>())
+        .def(py::init<Point_2, Point_2, CGAL::Orientation>())
+        .def(py::init<Point_2, CGAL::Orientation>())
+
+        .def("center", &Circle_2::center)
+        .def("squared_radius", &Circle_2::squared_radius)
+        .def("orientation", &Circle_2::orientation)
+        .def(py::self == Circle_2())
+        .def(py::self != Circle_2())
+
+        .def("is_degenerate", &Circle_2::is_degenerate)
+        .def("oriented_side", &Circle_2::oriented_side)
+        .def("bounded_side", &Circle_2::bounded_side)
+        .def("has_on_positive_side", &Circle_2::has_on_positive_side)
+        .def("has_on_negative_side", &Circle_2::has_on_negative_side)
+        .def("has_on_boundary", &Circle_2::has_on_boundary)
+        .def("has_on_bounded_side", &Circle_2::has_on_bounded_side)
+        .def("has_on_unbounded_side", &Circle_2::has_on_unbounded_side)
+
+        .def("opposite", &Circle_2::opposite)
+        .def("orthogonal_transform", &Circle_2::orthogonal_transform)
+        .def("bbox", &Circle_2::bbox)
+
+        .def("__repr__", &toString<Circle_2>)
+    ;
+
+    py::class_<Transformation_2>(m, "Transformation2")
  		.def(py::init<>())
  		.def(py::init<CGAL::Rotation, double, double>())
  		.def(py::init<CGAL::Rotation, Direction_2, double>())
@@ -243,7 +367,7 @@ void init_pygal_kernel(py::module &m) {
         .def("__repr__", &toString<Transformation_2>)
 	;
 
-    py::class_<Point_3>(m, "Point_3")
+    py::class_<Point_3>(m, "Point3")
         .def(py::init<>())
         .def(py::init<Point_3>())
         .def(py::init<CGAL::Origin>())
@@ -275,7 +399,7 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self - CGAL::Origin())
     ;
 
-    py::class_<Plane_3>(m, "Plane_3")
+    py::class_<Plane_3>(m, "Plane3")
         .def(py::init<>())
         .def(py::init<Plane_3>())
         .def(py::init<Point_3, Point_3, Point_3>())
@@ -312,7 +436,7 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self != Plane_3())
     ;
 
-    py::class_<Segment_3>(m, "Segment_3")
+    py::class_<Segment_3>(m, "Segment3")
         .def(py::init<>())
         .def(py::init<Segment_3>())
         .def(py::init<Point_3, Point_3>())
@@ -338,7 +462,7 @@ void init_pygal_kernel(py::module &m) {
     ;
 
 
-    py::class_<Vector_3>(m, "Vector_3")
+    py::class_<Vector_3>(m, "Vector3")
         .def(py::init<>())
         .def(py::init<Vector_3>())
         .def(py::init<CGAL::Null_vector>())
@@ -377,7 +501,7 @@ void init_pygal_kernel(py::module &m) {
         .def(CGAL::Origin() + py::self)
     ;
 
-    py::class_<Ray_3>(m, "Ray_3")
+    py::class_<Ray_3>(m, "Ray3")
         .def(py::init<>())
         .def(py::init<Ray_3&>())
         .def(py::init<Point_3, Point_3>())
@@ -400,7 +524,7 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self != py::self)
     ;
 
-    py::class_<Triangle_3>(m, "Triangle_3")
+    py::class_<Triangle_3>(m, "Triangle3")
         .def(py::init<>())
         .def(py::init<Triangle_3>())
         .def(py::init<Point_3, Point_3, Point_3>())
@@ -416,11 +540,12 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self != Triangle_3())
     ;
 
-
     // TODO add all combinations
     m.def("squared_distance", &sqdpy<Point_2, Point_2>);
-    m.def("squared_distance", &sqdpy<Line_2, Point_2>);
     m.def("squared_distance", &sqdpy<Line_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Point_2>);
     m.def("squared_distance", &sqdpy<Segment_2, Point_2>);
     m.def("squared_distance", &sqdpy<Line_2, Segment_2>);
 
@@ -430,22 +555,16 @@ void init_pygal_kernel(py::module &m) {
     m.def("do_intersect", &do_intersect<Ray_2, Line_2>);
     m.def("do_intersect", &do_intersect<Ray_2, Segment_2>);
 
-
     m.def("intersection", &intersect<Line_2, Line_2>);
     m.def("intersection", &intersect<Line_2, Segment_2>);
     m.def("intersection", &intersect<Segment_2, Segment_2>);
     m.def("intersection", &intersect<Ray_2, Segment_2>);
+
     // py::def("connect_holes", &connect_holes);
     // py::def("offset_polygon", &offset_polygon);
 
     // py::def("minkowski", &minkowski_sum);
 
     // py::def("optimal_convex_partition", &get_optimal_convex_partition);
-
-    m.def("to_double", &to_double<CGAL::Lazy_exact_nt<CGAL::Gmpq> >);
-
-    // TODO get implicit conversions to work
-    py::implicitly_convertible<py::float_, CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
-    py::implicitly_convertible<py::int_, Kernel::FT>();
 
 }

@@ -5,56 +5,56 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
+import numpy as np
 
 from draw import *
 from pygal import *
 
 
-
-
-fn = './test/teapot.obj'
+fn = 'assets/teapot.obj'
 # with open('./test/teapot.obj') as fi:
 p = polyhedron_from_string(fn)
 
 aabb = aabb.AABB(p)
 print(aabb)
 
-inter = aabb.do_intersect(Ray_3(Point_3(0, 0, 0), Point_3(100, 100, 100)))
+inter = aabb.do_intersect(Ray3(Point3(0, 0, 0), Point3(100, 100, 100)))
 print(inter)
 
 
 def draw(p):
 	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
 
 	faces = []
 	for facet in p.facets:
 		face = []
-		print(facet)
 		first = facet.halfedge()
 		point = first.vertex().point()
-		face.append([to_double(point.x()), to_double(point.y()), to_double(point.z())])
+		face.append([float(point.x()), float(point.y()), float(point.z())])
 		he = first.next()
 		while he is not first:
 			point = he.vertex().point()
-			face.append([to_double(point.x()), to_double(point.y()), to_double(point.z())])
+			face.append([float(point.x()), float(point.y()), float(point.z())])
 			he = he.next()
 		faces.append(face)
-	print(faces)
-	ax.add_collection3d(mplot3d.art3d.Poly3DCollection(faces))
-	# x.append(to_double(point.x()))
-	# y.append(to_double(point.y()))
-	# z.append(to_double(point.z()))
 
-	# ax.scatter(x, y, z)
-	plt.axis('equal')
+	arr = np.asarray(faces)
+	ax = Axes3D(fig)
+	ax.add_collection3d(mplot3d.art3d.Poly3DCollection(faces, alpha=0.3, edgecolor='red'))
+
+	all_points = arr.reshape(-1, 9)
+	xlim = np.min(all_points[:, 0]), np.max(all_points[:, 0])
+	ylim = np.min(all_points[:, 1]), np.max(all_points[:, 1])
+	zlim = np.min(all_points[:, 2]), np.max(all_points[:, 2])
+	lims = np.asarray([xlim, ylim, zlim])
+	lims = np.min(lims[:, 0]), np.max(lims[:, 1])
+	ax.set_xlim3d(*lims)
+	ax.set_ylim3d(*lims)
+	ax.set_zlim3d(*lims)
 	plt.show()
 
-seg = Segment_3(Point_3(1, 1, 1), Point_3(4, 4, 4))
+seg = Segment3(Point3(1, 1, 1), Point3(4, 4, 4))
 
 print(aabb.all_intersections(seg))
 
-import IPython
-IPython.embed()
-
-print(p)
+draw(p)
