@@ -24,14 +24,24 @@ ext_modules = [
     Extension(
         'pygal._pygal',
         [
-            'src/pygal.cpp',
-            'src/kernel.cpp',
-            'src/arrangement.cpp',
+            'src/pygal.cpp'
+            'src/kernel.cpp'
+            'src/polygon.cpp'
+            'src/global_functions.cpp'
+            'src/boolean.cpp'
+            'src/convex_hull.cpp'
+            'src/visibility.cpp'
+            'src/arrangement.cpp'
+            'src/principal_component_analysis.cpp'
+            'src/minkowski.cpp'
+            'src/polyhedron.cpp'
+            'src/aabb_tree.cpp'
+            'src/voronoi_delaunay.cpp'
+            'src/optimal_transport.cpp'
         ],
         include_dirs=[
             # Path to pybind11 headers
             './include/',
-            '/usr/include/',
             get_pybind_include(),
             get_pybind_include(user=True)
         ],
