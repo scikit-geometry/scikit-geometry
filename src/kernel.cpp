@@ -1,38 +1,6 @@
 #include "pygal.hpp"
 #include "funcs.hpp"
 
-// Polygon_with_holes_2 minkowski_sum(Polygon_with_holes_2 a, Polygon_2 b) {
-// 	return CGAL::minkowski_sum_2(a, b);
-// }
-
-// Polygon_2 connect_holes(Polygon_with_holes_2 p) {
-//     std::vector<Point_2> pts;
-//     CGAL::connect_holes(p, std::back_inserter(pts));
-//     return Polygon_2(pts.begin(), pts.end());
-// }
-
-
-// Polygon_2 offset_polygon(Polygon_2 p, double offset) {
-//   PolygonPtrVector inner_offset_polygons = 
-//     CGAL::create_interior_skeleton_and_offset_polygons_2(offset, p);
-//   return *inner_offset_polygons[0];
-// }
-
-// typedef std::vector<Traits_Polygon_2> Traits_Polygon_list;
-// typedef std::vector<Polygon_2> Polygon_list;
-// Polygon_list get_optimal_convex_partition(Polygon_2 p) {
-//     Traits_Polygon_list partition_polys;
-//     CGAL::optimal_convex_partition_2(p.vertices_begin(),
-//                                 p.vertices_end(),
-//                                 std::back_inserter(partition_polys));
-//     Polygon_list result;
-//     for (Traits_Polygon_2 poly : partition_polys) {
-//         result.push_back(Polygon_2(poly.vertices_begin(), poly.vertices_end()));
-//     }
-//     return result;
-//     // return partition_polys;
-// }
-
 struct Intersection_visitor {
   typedef py::object result_type;
   template<typename T>
@@ -77,6 +45,8 @@ bool do_intersect(T1 p, T2 q) {
     SINGLE_OP(T, >=) \
     SINGLE_OP(T, <)  \
     SINGLE_OP(T, <=) \
+    .def(-py::self)  \
+    .def(+py::self)  \
 
 
 void init_pygal_kernel(py::module &m) {
@@ -205,7 +175,10 @@ void init_pygal_kernel(py::module &m) {
         .def("ymax", &Bbox_2::ymax)
         .def("min", &Bbox_2::min)
         .def("max", &Bbox_2::max)
+        // this one seems to be a recent addition
+        #if CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(4, 14, 0)
         .def("dilate", &Bbox_2::dilate)
+        #endif
         .def("dimension", &Bbox_2::dimension)
         .def("__repr__", &toString<Bbox_2>)
         .def(py::self + Bbox_2())
@@ -461,7 +434,6 @@ void init_pygal_kernel(py::module &m) {
         .def(py::self != Segment_3())
     ;
 
-
     py::class_<Vector_3>(m, "Vector3")
         .def(py::init<>())
         .def(py::init<Vector_3>())
@@ -559,12 +531,4 @@ void init_pygal_kernel(py::module &m) {
     m.def("intersection", &intersect<Line_2, Segment_2>);
     m.def("intersection", &intersect<Segment_2, Segment_2>);
     m.def("intersection", &intersect<Ray_2, Segment_2>);
-
-    // py::def("connect_holes", &connect_holes);
-    // py::def("offset_polygon", &offset_polygon);
-
-    // py::def("minkowski", &minkowski_sum);
-
-    // py::def("optimal_convex_partition", &get_optimal_convex_partition);
-
 }

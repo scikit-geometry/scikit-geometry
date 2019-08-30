@@ -2,6 +2,12 @@
 
 #include <CGAL/Boolean_set_operations_2.h>
 
+Polygon_2 connect_holes(Polygon_with_holes_2 p) {
+    std::vector<Point_2> pts;
+    CGAL::connect_holes(p, std::back_inserter(pts));
+    return Polygon_2(pts.begin(), pts.end());
+}
+
 template<typename T1, typename T2>
 std::vector<Polygon_with_holes_2> difference(T1 a, T2 b) {
 	std::vector<Polygon_with_holes_2> result;
@@ -51,4 +57,6 @@ void init_boolean_set(py::module & m) {
     submodule.def("intersect", &poly_intersect<Polygon_2, Polygon_2>);
     submodule.def("intersect", &poly_intersect<Polygon_with_holes_2, Polygon_2>);
     submodule.def("intersect", &poly_intersect<Polygon_with_holes_2, Polygon_with_holes_2>);
+
+    submodule.def("connect_holes", &connect_holes);
 }
