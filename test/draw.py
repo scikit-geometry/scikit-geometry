@@ -2,7 +2,6 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import matplotlib.patches as patches
 from matplotlib.path import Path
-from pygal.pygal import to_double
 
 plt = plt
 
@@ -11,7 +10,7 @@ def draw(elem, plt=plt):
 		draw_polygon(elem)
 
 def to_list_of_tuples(iterable):
-	return [(to_double(p.x()), to_double(p.y())) for p in iterable]
+	return [(float(p.x()), float(p.y())) for p in iterable]
 
 def draw_poly(poly=None, vertices=None, plt=plt, facecolor='none', plot_vertices=True):
 	if poly:
@@ -25,7 +24,7 @@ def draw_poly(poly=None, vertices=None, plt=plt, facecolor='none', plot_vertices
 	# check if poly has holes ...
 	try:
 		for hole in poly.holes:
-			new_vs =[(to_double(p.x()), to_double(p.y())) for p in hole.vertices] + [(0, 0)]
+			new_vs =[(float(p.x()), float(p.y())) for p in hole.vertices] + [(0, 0)]
 			new_length = len(new_vs)
 			codes += [Path.MOVETO] + [Path.LINETO] * (new_length - 2) + [Path.CLOSEPOLY]
 			vertices += new_vs
@@ -58,5 +57,5 @@ def draw_point(point, **kwargs):
 	kkwargs.update(kwargs)
 
 	plt.gca().add_patch(patches.Circle((
-		to_double(point.x()), to_double(point.y())), 0.05, **kkwargs))
+		float(point.x()), float(point.y())), 0.05, **kkwargs))
 
