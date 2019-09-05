@@ -19,10 +19,11 @@ void init_global_functions(py::module &m) {
     m.attr("SCALING") = py::cast(CGAL::SCALING);
     m.attr("REFLECTION") = py::cast(CGAL::REFLECTION);
 
-    py::enum_<CGAL::Bounded_side>(m, "Bounded_side")
+    py::enum_<CGAL::Bounded_side>(m, "BoundedSide")
         .value("ON_BOUNDED_SIDE",   CGAL::Bounded_side::ON_BOUNDED_SIDE)
         .value("ON_BOUNDARY",       CGAL::Bounded_side::ON_BOUNDARY)
         .value("ON_UNBOUNDED_SIDE", CGAL::Bounded_side::ON_UNBOUNDED_SIDE)
+        .export_values()
     ;
 
     // Orientation, Oriented_side, and Comparison_result are actually only

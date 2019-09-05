@@ -14,7 +14,7 @@ CGAL::Bounded_side on_side(Polygon_2& poly, Point_2& point) {
     return CGAL::bounded_side_2(poly.vertices_begin(), poly.vertices_end(), point, Kernel());
 }
 
-Point_2 poly_center(Polygon_2& poly) {
+Point_2 centroid(Polygon_2& poly) {
     return CGAL::centroid(poly.vertices_begin(), poly.vertices_end(), CGAL::Dimension_tag<0>());
 }
 
@@ -37,10 +37,14 @@ void init_polygon(py::module &m) {
     	.def("is_simple", &Polygon_2::is_simple)
     	.def("is_convex", &Polygon_2::is_convex)
     	.def("orientation", &Polygon_2::orientation)
+        .def("reverse_orientation", &Polygon_2::reverse_orientation)
     	.def("bbox", &Polygon_2::bbox)
     	.def("area", &Polygon_2::area)
+        .def("oriented_side", &Polygon_2::oriented_side)
         .def("__repr__", &toString<Polygon_2>)
     ;
+
+    m.def("centroid", &centroid);
 
     py::class_<Polygon_with_holes_2>(m, "PolygonWithHoles")
         .def(py::init([](const Polygon_2& outer, const std::vector<Polygon_2>& holes) {
