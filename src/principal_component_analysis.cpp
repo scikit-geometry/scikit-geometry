@@ -29,8 +29,4 @@ void init_principal_component_analysis(py::module & m) {
 		return doublek_to_kernel(line_out);
 	});
 
-	sub.def("bounding_box", [](std::vector<Point_2> & points) -> Iso_rectangle_2 {;
-		return CGAL::bounding_box(points.begin(), points.end());
-	});
-
 }
