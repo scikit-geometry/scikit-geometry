@@ -35,13 +35,12 @@ if os.getenv('CONDA_PREFIX'):
     else:
         prefix = sys.prefix
 
-    print("Looking for libsolv in: ", prefix)
+    print("Looking for CGAL in: ", prefix)
 
     extra_link_args = []
     if sys.platform == 'darwin':
         extra_link_args = ['-Wl,-rpath', '-Wl,%s' % os.path.abspath(prefix)]
 
-    library_dir = []
     if sys.platform == 'win32':
         try:
             conda_prefix = os.getenv('CONDA_PREFIX')
@@ -51,12 +50,12 @@ if os.getenv('CONDA_PREFIX'):
                 raise RuntimeError("No conda prefix found")
 
             library_dir = [os.path.join(conda_prefix, 'Library\\lib\\')]
-            print("Looking for libsolv library in ", library_dir)
+            print("Looking for CGAL library in ", library_dir)
         except:
             print("could not find conda prefix")
+        library_dirs = [library_dir]
 
     include_dirs.insert(1, os.path.join(prefix, 'include'))
-    library_dirs = [library_dir]
 
 ext_modules = [
     Extension(
@@ -134,7 +133,7 @@ class BuildExt(build_ext):
     }
 
     if sys.platform == 'darwin':
-        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
+        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.12']
         c_opts['unix'] += darwin_opts
         l_opts['unix'] += darwin_opts
 
