@@ -9,8 +9,6 @@
 #include <CGAL/Voronoi_diagram_2/Handle_adaptor.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
 
-#include <variant>
-
 typedef CGAL::Triangulation_2<Kernel>         Triangulation;
 typedef Triangulation::Vertex                 T_Vertex;
 typedef Triangulation::Vertex_handle          T_Vertex_handle;

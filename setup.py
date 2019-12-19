@@ -1,6 +1,6 @@
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-import sys, os
+import sys, os, glob
 import setuptools
 
 __version__ = '0.2.0'
@@ -27,8 +27,9 @@ include_dirs = [
 ]
 
 library_dirs = None
+cgal_libs = ["CGAL", "CGAL_Core"]
 
-if os.getenv('CONDA_PREFIX'):
+if os.getenv('CONDA_PREFIX') or os.getenv('MINICONDAPATH'):
 
     if sys.platform.startswith('win'):
         prefix = os.path.join(sys.prefix, 'Library\\')
@@ -41,19 +42,25 @@ if os.getenv('CONDA_PREFIX'):
     if sys.platform == 'darwin':
         extra_link_args = ['-Wl,-rpath', '-Wl,%s' % os.path.abspath(prefix)]
 
-    if sys.platform == 'win32':
-        try:
-            conda_prefix = os.getenv('CONDA_PREFIX')
-            if not conda_prefix:
-                conda_prefix = os.getenv('MINICONDA')
-            if not conda_prefix:
-                raise RuntimeError("No conda prefix found")
 
-            library_dir = [os.path.join(conda_prefix, 'Library\\lib\\')]
-            print("Looking for CGAL library in ", library_dir)
-        except:
-            print("could not find conda prefix")
+    if sys.platform == 'win32':
+        library_dir = os.path.join(prefix, 'lib')
+        # currently we also need to add the apparently windows specific suffix here, it's unclear if this is 
+        # necessary if CGAL is installed not from CONDA.
+        # suffix = "-vc140-mt-4.14.1"
+        adjusted_cgal_libs = []
+        for lib in cgal_libs:
+            candidates = glob.glob(os.path.join(library_dir, lib) + '*.lib')
+            if not candidates:
+                raise RuntimeError("Library not found [[{}]]".format(lib))
+            c = os.path.basename(candidates[0])
+            c = os.path.splitext(c)[0]
+            adjusted_cgal_libs.append(c)
+        cgal_libs = adjusted_cgal_libs
+
         library_dirs = [library_dir]
+        print("Looking for CGAL library in ", library_dirs)
+        print("Names of adjusted CGAL libs: ", adjusted_cgal_libs)
 
     include_dirs.insert(1, os.path.join(prefix, 'include'))
 
@@ -78,9 +85,7 @@ ext_modules = [
         ],
         include_dirs=include_dirs,
         library_dirs=library_dirs,
-        libraries=['CGAL',
-                   'CGAL_Core',
-                   'mpfr',
+        libraries=cgal_libs + ['mpfr',
                    'gmp', 
                    'boost_thread',
                    'boost_atomic',
@@ -124,7 +129,7 @@ def cpp_flag(compiler):
 class BuildExt(build_ext):
     """A custom build extension for adding compiler-specific options."""
     c_opts = {
-        'msvc': ['/EHsc'],
+        'msvc': ['/EHsc', '/std:c++14'],
         'unix': [],
     }
     l_opts = {
