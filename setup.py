@@ -19,30 +19,44 @@ class get_pybind_include(object):
         import pybind11
         return pybind11.get_include(self.user)
 
-if sys.platform.startswith('win'):
-    prefix = os.path.join(sys.prefix, 'Library\\')
-else:
-    prefix = sys.prefix
+include_dirs = [
+    # Path to pybind11 headers
+    './include/',
+    get_pybind_include(),
+    get_pybind_include(user=True)
+]
 
-print("Looking for libsolv in: ", prefix)
+library_dirs = None
 
-extra_link_args = []
-if sys.platform == 'darwin':
-    extra_link_args = ['-Wl,-rpath', '-Wl,%s' % os.path.abspath(prefix)]
+if os.getenv('CONDA_PREFIX'):
 
-library_dir = []
-if sys.platform == 'win32':
-    try:
-        conda_prefix = os.getenv('CONDA_PREFIX')
-        if not conda_prefix:
-            conda_prefix = os.getenv('MINICONDA')
-        if not conda_prefix:
-            raise RuntimeError("No conda prefix found")
+    if sys.platform.startswith('win'):
+        prefix = os.path.join(sys.prefix, 'Library\\')
+    else:
+        prefix = sys.prefix
 
-        library_dir = [os.path.join(conda_prefix, 'Library\\lib\\')]
-        print("Looking for libsolv library in ", library_dir)
-    except:
-        print("could not find conda prefix")
+    print("Looking for libsolv in: ", prefix)
+
+    extra_link_args = []
+    if sys.platform == 'darwin':
+        extra_link_args = ['-Wl,-rpath', '-Wl,%s' % os.path.abspath(prefix)]
+
+    library_dir = []
+    if sys.platform == 'win32':
+        try:
+            conda_prefix = os.getenv('CONDA_PREFIX')
+            if not conda_prefix:
+                conda_prefix = os.getenv('MINICONDA')
+            if not conda_prefix:
+                raise RuntimeError("No conda prefix found")
+
+            library_dir = [os.path.join(conda_prefix, 'Library\\lib\\')]
+            print("Looking for libsolv library in ", library_dir)
+        except:
+            print("could not find conda prefix")
+
+    include_dirs.insert(1, os.path.join(prefix, 'include'))
+    library_dirs = [library_dir]
 
 ext_modules = [
     Extension(
@@ -63,14 +77,8 @@ ext_modules = [
             'src/voronoi_delaunay.cpp',
             'src/optimal_transport.cpp'
         ],
-        include_dirs=[
-            # Path to pybind11 headers
-            './include/',
-            os.path.join(prefix, 'include'),
-            get_pybind_include(),
-            get_pybind_include(user=True)
-        ],
-        library_dirs=library_dir,
+        include_dirs=include_dirs,
+        library_dirs=library_dirs,
         libraries=['CGAL',
                    'CGAL_Core',
                    'mpfr',
