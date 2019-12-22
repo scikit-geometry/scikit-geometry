@@ -3,7 +3,7 @@ from matplotlib import cm
 import matplotlib.patches as patches
 from matplotlib.path import Path
 
-import pygal
+import skgeom
 
 from multipledispatch import dispatch
 
@@ -198,7 +198,7 @@ def draw_voronoi(voronoi,display_range = 3, visible_point=True, edges_color='blu
 		if source and target:
 			plt.plot([source.point().x(), target.point().x()], [source.point().y(), target.point().y()], color = edges_color)
 
-	bbox = pygal.Bbox2()
+	bbox = skgeom.Bbox2()
 	for site in voronoi.sites:
 		bbox += site.bbox()
 		draw_point(site, color=sites_color)
@@ -212,7 +212,7 @@ def draw_voronoi(voronoi,display_range = 3, visible_point=True, edges_color='blu
 	plt.xlim(bbox.xmin() - display_range, bbox.xmax() + display_range)
 	plt.ylim(bbox.ymin() - display_range, bbox.ymax() + display_range)
 
-@dispatch(pygal._pygal.Point2)
+@dispatch(skgeom._skgeom.Point2)
 def draw(object, **kwargs):
 	draw_point(object, **kwargs)
 
@@ -221,42 +221,42 @@ def draw(object, **kwargs):
 	for el in object:
 		draw(el, **kwargs)
 
-@dispatch(pygal._pygal.Vector2)
+@dispatch(skgeom._skgeom.Vector2)
 def draw(object, **kwargs):
 	draw_vector(object, **kwargs)
 
-@dispatch(pygal._pygal.Ray2)
+@dispatch(skgeom._skgeom.Ray2)
 def draw(object, **kwargs):
 	draw_ray(object, **kwargs)
 
-@dispatch(pygal._pygal.Direction2)
+@dispatch(skgeom._skgeom.Direction2)
 def draw(object, **kwargs):
 	draw_direction(object, **kwargs)
 
-@dispatch(pygal._pygal.Bbox2)
+@dispatch(skgeom._skgeom.Bbox2)
 def draw(object, **kwargs):
 	draw_bbox(object, **kwargs)
 
-@dispatch(pygal._pygal.Line2)
+@dispatch(skgeom._skgeom.Line2)
 def draw(object, **kwargs):
 	draw_line(object, **kwargs)
 
-@dispatch(pygal._pygal.IsoRectangle2)
+@dispatch(skgeom._skgeom.IsoRectangle2)
 def draw(object, **kwargs):
 	draw_iso_rectangle(object, **kwargs)
 
-@dispatch(pygal._pygal.Segment2)
+@dispatch(skgeom._skgeom.Segment2)
 def draw(object, **kwargs):
 	draw_segment(object, **kwargs)
 
-@dispatch(pygal._pygal.Circle2)
+@dispatch(skgeom._skgeom.Circle2)
 def draw(object, **kwargs):
 	draw_circle(object, **kwargs)
 
-@dispatch(pygal._pygal.Polygon)
+@dispatch(skgeom._skgeom.Polygon)
 def draw(object, **kwargs):
 	draw_polygon(object, **kwargs)
 
-@dispatch(pygal._pygal.voronoi.VoronoiDiagram)
+@dispatch(skgeom._skgeom.voronoi.VoronoiDiagram)
 def draw(object, **kwargs):
 	draw_voronoi(object, **kwargs)

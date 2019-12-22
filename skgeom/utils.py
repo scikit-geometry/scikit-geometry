@@ -1,4 +1,4 @@
-from ._pygal import Segment2, Point2
+from ._skgeom import Segment2, Point2
 
 def to_point(arg):
     if isinstance(arg, Point2):

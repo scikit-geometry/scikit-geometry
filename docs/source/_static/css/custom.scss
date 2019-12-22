@@ -1,0 +1,50 @@
+@import 'nbsphinx';
+
+.prompt {
+	display: none;
+}
+
+$font-stack:    Helvetica, sans-serif;
+$primary-color: #333;
+
+body {
+  font: 100% $font-stack;
+  color: $primary-color;
+}
+
+div.nbinput.container div.input_area {
+	background: #F9F9F9;
+	border: none;
+	margin-bottom: none;
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 0;  /* padding has already 5px */
+    padding: 0;
+}
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: 0px;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+div.nbinput.container
+{
+	padding: none;
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+
+.nboutput {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */
+}

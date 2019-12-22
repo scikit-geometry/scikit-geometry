@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 #include "funcs.hpp"
 #include <CGAL/ch_graham_andrew.h>
 

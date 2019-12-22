@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 #include "funcs.hpp"
 
 #include <CGAL/Rotational_sweep_visibility_2.h>
@@ -57,7 +57,7 @@ py::object find_in_arrangement(Segment_Arrangement_2& arr, Point_2& query_point)
     const Halfedge_const_handle* e;
     const Face_const_handle*     f;
 
-    // Casting to non - const types since they are only defined in pygal
+    // Casting to non - const types since they are only defined in skgeom
     if ((f = boost::get<Face_const_handle>(&obj)))
     {
         // Note it's very important to return `Handles` here.
@@ -74,7 +74,7 @@ py::object find_in_arrangement(Segment_Arrangement_2& arr, Point_2& query_point)
     return py::none();
 }
 
-namespace pygal
+namespace skgeom
 {
     using namespace pybind11;
 
@@ -152,7 +152,7 @@ namespace pygal
                         s.first_or_done = true;
                         throw stop_iteration();
                     }
-                    return pygal::make_circulator<Policy, Halfedge_handle>(*s.it);
+                    return skgeom::make_circulator<Policy, Halfedge_handle>(*s.it);
                 }, std::forward<Extra>(extra)..., Policy);
         }
 
@@ -166,13 +166,13 @@ void init_arrangement(py::module &m) {
     py::class_<Segment_Arrangement_2>(sub, "Arrangement")
         .def(py::init<>())
         .def_property_readonly("halfedges", [](Segment_Arrangement_2& s) {
-           return pygal::make_handle_iterator<py::return_value_policy::reference_internal, Halfedge_handle>(s.halfedges_begin(), s.halfedges_end());
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, Halfedge_handle>(s.halfedges_begin(), s.halfedges_end());
         }, py::keep_alive<0, 1>())
         .def_property_readonly("faces", [](Segment_Arrangement_2& s) {
-           return pygal::make_handle_iterator<py::return_value_policy::reference_internal, Face_handle>(s.faces_begin(), s.faces_end());
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, Face_handle>(s.faces_begin(), s.faces_end());
         }, py::keep_alive<0, 1>())
         .def_property_readonly("vertices", [](Segment_Arrangement_2& s) {
-           return pygal::make_handle_iterator<py::return_value_policy::reference_internal, Vertex_handle>(s.vertices_begin(), s.vertices_end());
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, Vertex_handle>(s.vertices_begin(), s.vertices_end());
         }, py::keep_alive<0, 1>())
         .def("insert_non_intersecting_curve", &insert_non_intersecting_curve_in_arr)
         .def("insert_non_intersecting_curves", &insert_non_intersecting_curves_in_arr)
@@ -195,7 +195,7 @@ void init_arrangement(py::module &m) {
     py::class_<Vertex, Vertex_handle>(sub, "Vertex")
         .def("point", [](Vertex& self) { return self.point(); })
         .def_property_readonly("incident_halfedges", [](Vertex& self) {
-            return pygal::make_circulator<py::return_value_policy::reference_internal, Halfedge_handle>(self.incident_halfedges());
+            return skgeom::make_circulator<py::return_value_policy::reference_internal, Halfedge_handle>(self.incident_halfedges());
         }, py::keep_alive<0, 1>())
     ;
 
@@ -223,10 +223,10 @@ void init_arrangement(py::module &m) {
             return py::make_iterator(self.isolated_vertices_begin(), self.isolated_vertices_end()); 
         }, py::keep_alive<0, 1>())
         .def_property_readonly("outer_ccb", [](Face& self) {
-            return pygal::make_circulator<py::return_value_policy::reference_internal, Halfedge_handle>(self.outer_ccb()); 
+            return skgeom::make_circulator<py::return_value_policy::reference_internal, Halfedge_handle>(self.outer_ccb()); 
         }, py::keep_alive<0, 1>())
         .def_property_readonly("holes", [](Face& self) {
-            return pygal::make_hole_iterator(self.holes_begin(), self.holes_end()); 
+            return skgeom::make_hole_iterator(self.holes_begin(), self.holes_end()); 
         }, py::keep_alive<0, 1>())
     ;
 

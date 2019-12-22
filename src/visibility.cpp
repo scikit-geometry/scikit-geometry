@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>

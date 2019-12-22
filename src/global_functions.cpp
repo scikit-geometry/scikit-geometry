@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/Origin.h>
 

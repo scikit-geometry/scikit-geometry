@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>

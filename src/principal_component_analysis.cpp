@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/bounding_box.h>

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from draw import *
-from pygal import *
+from skgeom import *
 
 
 fn = 'assets/teapot.obj'

@@ -1,5 +1,5 @@
 import unittest
-from pygal import Point2, Bbox2, Vector2, Line2, intersection, do_intersect
+from skgeom import Point2, Bbox2, Vector2, Line2, intersection, do_intersect
 
 class BasicTest(unittest.TestCase):
 	def test_point(self):

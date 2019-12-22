@@ -12,7 +12,7 @@ image:
 
 environment:
   matrix:
-    - MINICONDAPATH: C:\condapygal
+    - MINICONDAPATH: C:\condaskgeom
 
 init:
   - "ECHO %MINICONDAPATH%"
@@ -29,8 +29,8 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda install cgal cgal-cpp multipledispatch pybind11 -c conda-forge
+  - conda install cgal cgal-cpp multipledispatch pybind11 matplotlib -c conda-forge
   - python -m pip install -e . -vvv
 
 build_script:
-  - python -c "import pygal; print(pygal.Point2(0, 5))"
+  - python -c "import skgeom; print(skgeom.Point2(0, 5))"

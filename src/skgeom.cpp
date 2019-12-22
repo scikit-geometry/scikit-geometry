@@ -11,7 +11,7 @@
 namespace py = pybind11;
 
 
-void init_pygal_kernel(py::module&);
+void init_skgeom_kernel(py::module&);
 void init_global_functions(py::module&);
 void init_polygon(py::module&);
 void init_boolean_set(py::module&);
@@ -27,11 +27,11 @@ void init_optimal_transport(py::module&);
 void init_polygon_offset(py::module&);
 
 
-PYBIND11_MODULE(_pygal, m) {
+PYBIND11_MODULE(_skgeom, m) {
     m.doc() = "";
 
     init_global_functions(m);
-    init_pygal_kernel(m);
+    init_skgeom_kernel(m);
     init_arrangement(m);
     init_polygon(m);
     init_boolean_set(m);

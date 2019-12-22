@@ -66,9 +66,9 @@ if os.getenv('CONDA_PREFIX') or os.getenv('MINICONDAPATH'):
 
 ext_modules = [
     Extension(
-        'pygal._pygal',
+        'skgeom._skgeom',
         [
-            'src/pygal.cpp',
+            'src/skgeom.cpp',
             'src/kernel.cpp',
             'src/polygon.cpp',
             'src/global_functions.cpp',
@@ -165,12 +165,12 @@ class BuildExt(build_ext):
         build_ext.build_extensions(self)
 
 setup(
-    name='pygal',
+    name='skgeom',
     version=__version__,
     author='Wolf Vollprecht',
     author_email='w.vollprecht@gmail.com',
-    url='https://github.com/wolfv/pygal',
-    description='PYGAL, the python computational geometry library',
+    url='https://github.com/wolfv/scikit-geometry',
+    description='scikit-geometry, the python computational geometry library',
     long_description='',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.3'],
