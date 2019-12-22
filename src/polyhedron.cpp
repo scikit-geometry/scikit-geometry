@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 #include "docs/docs_polyhedron.h"
 
 #include <CGAL/Polyhedron_3.h>

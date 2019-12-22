@@ -12,7 +12,7 @@ image:
 
 environment:
   matrix:
-    - MINICONDAPATH: C:\condapygal
+    - MINICONDAPATH: C:\condaskgeom
 
 init:
   - "ECHO %MINICONDAPATH%"
@@ -33,4 +33,4 @@ install:
   - python -m pip install -e . -vvv
 
 build_script:
-  - python -c "import pygal; print(pygal.Point2(0, 5))"
+  - python -c "import skgeom; print(skgeom.Point2(0, 5))"

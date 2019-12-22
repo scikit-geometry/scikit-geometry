@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/Boolean_set_operations_2.h>
 

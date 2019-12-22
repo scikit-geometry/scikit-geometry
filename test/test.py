@@ -2,8 +2,8 @@ import sys
 sys.path.append('.')
 
 from draw import *
-from pygal import *
-import pygal
+from skgeom import *
+import skgeom
 import random as rnd
 
 a = Point2(0, 0)
@@ -20,13 +20,13 @@ print(barycenter(a, 2, b, 12))
 points = [Point2(rnd.uniform(-10, 10), rnd.uniform(-10, 10)) for i in range(0, 100)]
 
 draw_list(points)
-cvh = pygal.convex_hull.graham_andrew(points)
+cvh = skgeom.convex_hull.graham_andrew(points)
 draw_list(cvh, as_poly=True)
 plt.axis('equal')
 plt.show()
 
-print(pygal.intersection(s, p))
-poly = pygal.Polygon([a, c, b, d])
+print(skgeom.intersection(s, p))
+poly = skgeom.Polygon([a, c, b, d])
 
 print(poly)
 print("Poly a simple: ", poly.is_simple())
@@ -47,16 +47,16 @@ for e in poly.edges:
 
 print(list(poly.edges));
 
-pwh = pygal.PolygonWithHoles(poly, [pygal.Polygon(h)])
+pwh = skgeom.PolygonWithHoles(poly, [skgeom.Polygon(h)])
 print(pwh)
 
-poly_a = pygal.Polygon(list(reversed([a,c,b,d])))
-poly_b = pygal.Polygon(list(reversed(h)))
+poly_a = skgeom.Polygon(list(reversed([a,c,b,d])))
+poly_b = skgeom.Polygon(list(reversed(h)))
 print("Poly b simple: ", poly_b.is_simple())
 
-print(pygal.boolean_set.join(poly_a, poly_b))
+print(skgeom.boolean_set.join(poly_a, poly_b))
 
-arr = pygal.arrangement.Arrangement()
+arr = skgeom.arrangement.Arrangement()
 arr.insert_non_intersecting_curve(s)
 arr.insert_non_intersecting_curve(p)
 
@@ -68,9 +68,9 @@ for he in arr.halfedges:
 	
 	# fh = arr.remove_edge(he)
 
-visi = pygal.RotationalSweepVisibility(arr)
+visi = skgeom.RotationalSweepVisibility(arr)
 
-# print(pygal.BezierCurve(a,b,c,d))
+# print(skgeom.BezierCurve(a,b,c,d))
 # t = BezierCurve(a,b,c,d)
 # bezl = []
 # i = 0
@@ -86,8 +86,8 @@ visi = pygal.RotationalSweepVisibility(arr)
 # ponbez = t.get(0.12)
 # print(l, h)
 
-# print(pygal.to_double(ponbez.x()), pygal.to_double(ponbez.y()))
-# out = visi.compute_visibility(pygal.Point(3, 5), h)
+# print(skgeom.to_double(ponbez.x()), skgeom.to_double(ponbez.y()))
+# out = visi.compute_visibility(skgeom.Point(3, 5), h)
 # print(out)
 
 # print(visi)

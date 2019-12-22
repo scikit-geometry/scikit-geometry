@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 #include "funcs.hpp"
 
 struct Intersection_visitor {
@@ -49,7 +49,7 @@ bool do_intersect(T1 p, T2 q) {
     .def(+py::self)  \
 
 
-void init_pygal_kernel(py::module &m) {
+void init_skgeom_kernel(py::module &m) {
 
     py::class_<Kernel::FT>(m, "FieldNumberType")
         .def(py::init<double>())
@@ -378,7 +378,7 @@ void init_pygal_kernel(py::module &m) {
         .def(py::init<Point_3, Point_3, Point_3>())
         .def(py::init<Point_3, Direction_3>())
         .def(py::init<Point_3, Vector_3>())
-        .def(py::init<PYGAL_FT, PYGAL_FT, PYGAL_FT, PYGAL_FT>())
+        .def(py::init<SKGEOM_FT, SKGEOM_FT, SKGEOM_FT, SKGEOM_FT>())
         .def(py::init<double, double, double, double>())
         .def(py::init<Line_3, Point_3>())
         .def(py::init<Segment_3, Point_3>())
@@ -442,8 +442,8 @@ void init_pygal_kernel(py::module &m) {
         .def(py::init<Segment_3>())
         .def(py::init<Ray_3>())
         .def(py::init<Line_3>())
-        .def(py::init<PYGAL_FT, PYGAL_FT, PYGAL_FT>())
-        .def(py::init<PYGAL_FT, PYGAL_FT, PYGAL_FT, PYGAL_FT>())
+        .def(py::init<SKGEOM_FT, SKGEOM_FT, SKGEOM_FT>())
+        .def(py::init<SKGEOM_FT, SKGEOM_FT, SKGEOM_FT, SKGEOM_FT>())
         .def(py::init<double, double, double>())
         .def(py::init<double, double, double, double>())
         .def("x", &Vector_3::x)

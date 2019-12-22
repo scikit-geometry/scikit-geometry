@@ -1,8 +1,8 @@
 import unittest
 
 # from draw import *
-from pygal import *
-from pygal.utils import *
+from skgeom import *
+from skgeom.utils import *
 
 import IPython
 

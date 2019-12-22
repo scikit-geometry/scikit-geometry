@@ -21,8 +21,8 @@ namespace py = pybind11;
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 
-typedef Kernel::FT                                          PYGAL_FT;
-typedef Kernel::RT                                          PYGAL_RT;
+typedef Kernel::FT                                          SKGEOM_FT;
+typedef Kernel::RT                                          SKGEOM_RT;
 
 typedef Kernel::Point_2                                     Point_2;
 typedef Kernel::Segment_2                                   Segment_2;

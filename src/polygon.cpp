@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 #include "funcs.hpp"
 
 std::vector<Segment_2> get_edges(Polygon_2 p) {

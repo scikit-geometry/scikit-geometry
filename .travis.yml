@@ -43,4 +43,4 @@ install:
     # Build
     - python -m pip install -e . -vvv
 script:
-    - echo -e "import pygal; print(pygal.Point2(0, 5))" | python
+    - echo -e "import skgeom; print(skgeom.Point2(0, 5))" | python

@@ -1,7 +1,7 @@
 import numpy as np
-import pygal
+import skgeom
 import unittest
-from pygal import voronoi
+from skgeom import voronoi
 from matplotlib import pyplot as plt
 
 class VoronoiTest(unittest.TestCase):
@@ -11,7 +11,7 @@ class VoronoiTest(unittest.TestCase):
         points = []
         for r in npoints:
             print(r)
-            points.append(pygal.Point2(*r))
+            points.append(skgeom.Point2(*r))
 
         vdiag = voronoi.VoronoiDiagram()
         

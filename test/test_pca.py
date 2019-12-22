@@ -4,8 +4,8 @@ sys.path.append('.')
 import unittest
 
 from draw import *
-from pygal import *
-from pygal import principal_component_analysis as pca
+from skgeom import *
+from skgeom import principal_component_analysis as pca
 
 class PCATests(unittest.TestCase):
     def setUp(self):

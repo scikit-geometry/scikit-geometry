@@ -1,6 +1,7 @@
 # import all contents from C++ extension module
 import unittest
-from ._pygal import *
+from ._skgeom import *
+from skgeom import draw
 
 class BasicTest(unittest.TestCase):
 	def test_point(self):

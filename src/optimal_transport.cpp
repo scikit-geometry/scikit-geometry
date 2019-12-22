@@ -1,4 +1,4 @@
-#include "pygal.hpp"
+#include "skgeom.hpp"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Optimal_transportation_reconstruction_2.h>
@@ -58,28 +58,28 @@ void init_optimal_transport(py::module & m) {
             std::vector<INEXACT_Point> isolated_points;
             std::vector<INEXACT_Segment> segments;
 
-            std::vector<Point_2> isolated_points_pygal;
-            std::vector<Segment_2> segments_pygal;
+            std::vector<Point_2> isolated_points_skgeom;
+            std::vector<Segment_2> segments_skgeom;
 
             otr.list_output(std::back_inserter(isolated_points),
                             std::back_inserter(segments));
 
-            isolated_points_pygal.reserve(isolated_points.size());
-            segments_pygal.reserve(segments.size());
+            isolated_points_skgeom.reserve(isolated_points.size());
+            segments_skgeom.reserve(segments.size());
 
             for(const auto& p : isolated_points)
             {
-                isolated_points_pygal.emplace_back(p.x(), p.y());
+                isolated_points_skgeom.emplace_back(p.x(), p.y());
             }
 
             for(const auto& s : segments)
             {
-                segments_pygal.emplace_back(
+                segments_skgeom.emplace_back(
                     Point_2(s.source().x(), s.source().y()),
                     Point_2(s.target().x(), s.target().y())
                 );
             }
-            return std::make_tuple(isolated_points_pygal, segments_pygal);
+            return std::make_tuple(isolated_points_skgeom, segments_skgeom);
         })
         .def("relocate_all_points", &Otr_2::relocate_all_points)
     ;
@@ -91,28 +91,28 @@ void init_optimal_transport(py::module & m) {
             std::vector<INEXACT_Point> isolated_points;
             std::vector<INEXACT_Segment> segments;
 
-            std::vector<Point_2> isolated_points_pygal;
-            std::vector<Segment_2> segments_pygal;
+            std::vector<Point_2> isolated_points_skgeom;
+            std::vector<Segment_2> segments_skgeom;
 
             otr.list_output(std::back_inserter(isolated_points),
                             std::back_inserter(segments));
 
-            isolated_points_pygal.reserve(isolated_points.size());
-            segments_pygal.reserve(segments.size());
+            isolated_points_skgeom.reserve(isolated_points.size());
+            segments_skgeom.reserve(segments.size());
 
             for(const auto& p : isolated_points)
             {
-                isolated_points_pygal.emplace_back(p.x(), p.y());
+                isolated_points_skgeom.emplace_back(p.x(), p.y());
             }
 
             for(const auto& s : segments)
             {
-                segments_pygal.emplace_back(
+                segments_skgeom.emplace_back(
                     Point_2(s.source().x(), s.source().y()),
                     Point_2(s.target().x(), s.target().y())
                 );
             }
-            return std::make_tuple(isolated_points_pygal, segments_pygal);
+            return std::make_tuple(isolated_points_skgeom, segments_skgeom);
         })
         .def("relocate_all_points", &Otr_2_with_mass::relocate_all_points)
     ;
