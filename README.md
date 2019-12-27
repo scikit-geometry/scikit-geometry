@@ -2,7 +2,7 @@
 
 ![scikit-geometry logo](docs/source/_static/scikit-geometry.svg)
 
-> A Python Geometric Algorithms Library
+*A Python Geometric Algorithms Library*
 
 The scikit-geometry package contains a whole lot of geometric algorithms. For the moment, scikit-geometry derives most of it’s functionality from the mature and stable Computational Geometry Algorithms Library (CGAL) package, a collection of geometric algorithms written in C++.
 Basic Geometric Types
