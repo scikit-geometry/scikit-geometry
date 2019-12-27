@@ -48,7 +48,7 @@ print(s)
 
 ## Documentation
 
-The docs are hosted on github: [https://wolfv.github.io/scikit-geometry](https://wolfv.github.io/scikit-geometry)
+The docs are hosted on github: [https://wolfv.github.io/scikit-geometry](https://scikit-geometry.github.io/scikit-geometry)
 
 It is built from Jupyter notebooks that can be found under the `/docs` subdirectory.
 
