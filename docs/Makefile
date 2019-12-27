@@ -6,7 +6,7 @@
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
-BUILDDIR      = build
+BUILDDIR      = ../../skgeom-docs/
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -22,6 +22,7 @@ help:
 html:
 	sass ./source/_static/css/custom.scss ./source/_static/css/custom.css
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)	
+	touch $(BUILDDIR)/html/.nojekyll
 
 css:
 	sass --watch ./source/_static/css/custom.scss:./source/_static/css/custom.css
