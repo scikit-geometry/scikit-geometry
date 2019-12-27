@@ -7,7 +7,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 import numpy as np
 
-from draw import *
+from skgeom.draw import *
 from skgeom import *
 
 

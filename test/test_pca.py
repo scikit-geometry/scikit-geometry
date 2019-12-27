@@ -3,7 +3,7 @@ sys.path.append('.')
 
 import unittest
 
-from draw import *
+from skgeom.draw import *
 from skgeom import *
 from skgeom import principal_component_analysis as pca
 

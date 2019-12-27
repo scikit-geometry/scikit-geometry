@@ -1,6 +1,5 @@
 import unittest
 
-# from draw import *
 from skgeom import *
 from skgeom.utils import *
 

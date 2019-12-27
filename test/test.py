@@ -1,8 +1,8 @@
 import sys
 sys.path.append('.')
 
-from draw import *
 from skgeom import *
+from skgeom.draw import *
 import skgeom
 import random as rnd
 
@@ -19,9 +19,9 @@ print(barycenter(a, 2, b, 12))
 
 points = [Point2(rnd.uniform(-10, 10), rnd.uniform(-10, 10)) for i in range(0, 100)]
 
-draw_list(points)
+draw(points)
 cvh = skgeom.convex_hull.graham_andrew(points)
-draw_list(cvh, as_poly=True)
+draw(Polygon(cvh))
 plt.axis('equal')
 plt.show()
 
