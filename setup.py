@@ -3,8 +3,6 @@ from setuptools.command.build_ext import build_ext
 import sys, os, glob
 import setuptools
 
-__version__ = '0.2.0'
-
 
 class get_pybind_include(object):
     """Helper class to determine the pybind11 include path
@@ -164,9 +162,14 @@ class BuildExt(build_ext):
 
         build_ext.build_extensions(self)
 
+here = os.path.dirname(os.path.abspath(__file__))
+version_ns = {}
+with open(os.path.join(here, 'skgeom', '_version.py')) as f:
+    exec(f.read(), {}, version_ns)
+
 setup(
     name='skgeom',
-    version=__version__,
+    version=version_ns['__version__'],
     author='Wolf Vollprecht',
     author_email='w.vollprecht@gmail.com',
     url='https://github.com/wolfv/scikit-geometry',
