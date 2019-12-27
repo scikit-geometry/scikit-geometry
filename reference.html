@@ -1,0 +1,1276 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Geometric Primitives &mdash; scikit-geometry docs 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Computing a Convex Hull" href="convex_hull.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> scikit-geometry docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygon.html">Polygons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convex_hull.html">Computing a Convex Hull</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Geometric Primitives</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#two-dimensional-primitives">Two-dimensional primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#three-dimensional-primitives">Three-dimensional primitives</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scikit-geometry docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Geometric Primitives</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/reference.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="geometric-primitives">
+<h1>Geometric Primitives<a class="headerlink" href="#geometric-primitives" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="two-dimensional-primitives">
+<h2>Two-dimensional primitives<a class="headerlink" href="#two-dimensional-primitives" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skgeom._skgeom.Point2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Point2</code><a class="headerlink" href="#skgeom._skgeom.Point2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Point2.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; CGAL::Bbox_2<a class="headerlink" href="#skgeom._skgeom.Point2.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.dimension">
+<code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#skgeom._skgeom.Point2.dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.hw">
+<code class="sig-name descname">hw</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point2.hw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.hx">
+<code class="sig-name descname">hx</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point2.hx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.hy">
+<code class="sig-name descname">hy</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point2.hy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Point2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.x">
+<code class="sig-name descname">x</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point2.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point2.y">
+<code class="sig-name descname">y</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point2.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Vector2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Vector2</code><a class="headerlink" href="#skgeom._skgeom.Vector2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Vector2.cartesian">
+<code class="sig-name descname">cartesian</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.cartesian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_2&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Vector2.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.hw">
+<code class="sig-name descname">hw</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.hw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.hx">
+<code class="sig-name descname">hx</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.hx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.hy">
+<code class="sig-name descname">hy</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.hy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.perpendicular">
+<code class="sig-name descname">perpendicular</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em>, <em class="sig-param">arg0: skgeom._skgeom.Sign</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Vector2.perpendicular" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.squared_length">
+<code class="sig-name descname">squared_length</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.squared_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Vector2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.x">
+<code class="sig-name descname">x</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector2.y">
+<code class="sig-name descname">y</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector2.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Segment2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Segment2</code><a class="headerlink" href="#skgeom._skgeom.Segment2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Segment2.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Bbox2<a class="headerlink" href="#skgeom._skgeom.Segment2.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.collinear_has_on">
+<code class="sig-name descname">collinear_has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment2.collinear_has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Direction2<a class="headerlink" href="#skgeom._skgeom.Segment2.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment2.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment2.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.is_horizontal">
+<code class="sig-name descname">is_horizontal</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment2.is_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.is_vertical">
+<code class="sig-name descname">is_vertical</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment2.is_vertical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.max">
+<code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Segment2.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.min">
+<code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Segment2.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Segment2<a class="headerlink" href="#skgeom._skgeom.Segment2.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Segment2.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.source">
+<code class="sig-name descname">source</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Segment2.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.squared_length">
+<code class="sig-name descname">squared_length</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Segment2.squared_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.supporting_line">
+<code class="sig-name descname">supporting_line</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Line2<a class="headerlink" href="#skgeom._skgeom.Segment2.supporting_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.target">
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Segment2.target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Segment2.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Segment2<a class="headerlink" href="#skgeom._skgeom.Segment2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Line2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Line2</code><a class="headerlink" href="#skgeom._skgeom.Line2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Line2.a">
+<code class="sig-name descname">a</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Line2.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.b">
+<code class="sig-name descname">b</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Line2.b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.c">
+<code class="sig-name descname">c</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Line2.c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Direction2<a class="headerlink" href="#skgeom._skgeom.Line2.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.has_on_negative_side">
+<code class="sig-name descname">has_on_negative_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.has_on_negative_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.has_on_positive_side">
+<code class="sig-name descname">has_on_positive_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.has_on_positive_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.is_horizontal">
+<code class="sig-name descname">is_horizontal</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.is_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.is_vertical">
+<code class="sig-name descname">is_vertical</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Line2.is_vertical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Line2<a class="headerlink" href="#skgeom._skgeom.Line2.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.oriented_side">
+<code class="sig-name descname">oriented_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Sign<a class="headerlink" href="#skgeom._skgeom.Line2.oriented_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.perpendicular">
+<code class="sig-name descname">perpendicular</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Line2<a class="headerlink" href="#skgeom._skgeom.Line2.perpendicular" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Line2.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.projection">
+<code class="sig-name descname">projection</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Line2.projection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Line2.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Line2<a class="headerlink" href="#skgeom._skgeom.Line2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.x_at_y">
+<code class="sig-name descname">x_at_y</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.FieldNumberType</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Line2.x_at_y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Line2.y_at_x">
+<code class="sig-name descname">y_at_x</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Line2</em>, <em class="sig-param">arg0: skgeom._skgeom.FieldNumberType</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Line2.y_at_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Ray2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Ray2</code><a class="headerlink" href="#skgeom._skgeom.Ray2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Ray2.collinear_has_on">
+<code class="sig-name descname">collinear_has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray2.collinear_has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_2&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Ray2.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray2.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray2.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.is_horizontal">
+<code class="sig-name descname">is_horizontal</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray2.is_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.is_vertical">
+<code class="sig-name descname">is_vertical</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray2.is_vertical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Ray2<a class="headerlink" href="#skgeom._skgeom.Ray2.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Ray2.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.source">
+<code class="sig-name descname">source</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Ray2.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.supporting_line">
+<code class="sig-name descname">supporting_line</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; CGAL::Line_2&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Ray2.supporting_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Ray2.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Ray2<a class="headerlink" href="#skgeom._skgeom.Ray2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Direction2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Direction2</code><a class="headerlink" href="#skgeom._skgeom.Direction2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Direction2.counterclockwise_in_between">
+<code class="sig-name descname">counterclockwise_in_between</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Direction2</em>, <em class="sig-param">arg0: skgeom._skgeom.Direction2</em>, <em class="sig-param">arg1: skgeom._skgeom.Direction2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Direction2.counterclockwise_in_between" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Direction2.delta">
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Direction2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Direction2.delta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Direction2.dx">
+<code class="sig-name descname">dx</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Direction2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Direction2.dx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Direction2.dy">
+<code class="sig-name descname">dy</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Direction2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Direction2.dy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Direction2.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Direction2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector2<a class="headerlink" href="#skgeom._skgeom.Direction2.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Bbox2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Bbox2</code><a class="headerlink" href="#skgeom._skgeom.Bbox2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Bbox2.dilate">
+<code class="sig-name descname">dilate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#skgeom._skgeom.Bbox2.dilate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.dimension">
+<code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#skgeom._skgeom.Bbox2.dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.max">
+<code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.min">
+<code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.xmax">
+<code class="sig-name descname">xmax</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.xmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.xmin">
+<code class="sig-name descname">xmin</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.xmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.ymax">
+<code class="sig-name descname">ymax</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.ymax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Bbox2.ymin">
+<code class="sig-name descname">ymin</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Bbox2</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#skgeom._skgeom.Bbox2.ymin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.IsoRectangle2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">IsoRectangle2</code><a class="headerlink" href="#skgeom._skgeom.IsoRectangle2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.area">
+<code class="sig-name descname">area</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.area" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Bbox2<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.bounded_side">
+<code class="sig-name descname">bounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.BoundedSide<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.bounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.has_on_boundary">
+<code class="sig-name descname">has_on_boundary</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.has_on_boundary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.has_on_bounded_side">
+<code class="sig-name descname">has_on_bounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.has_on_bounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.has_on_unbounded_side">
+<code class="sig-name descname">has_on_unbounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.has_on_unbounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.max">
+<code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.max_coord">
+<code class="sig-name descname">max_coord</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.max_coord" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.min">
+<code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.min_coord">
+<code class="sig-name descname">min_coord</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.min_coord" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.IsoRectangle2<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.vertex">
+<code class="sig-name descname">vertex</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.vertex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.xmax">
+<code class="sig-name descname">xmax</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.xmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.xmin">
+<code class="sig-name descname">xmin</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.xmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.ymax">
+<code class="sig-name descname">ymax</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.ymax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.IsoRectangle2.ymin">
+<code class="sig-name descname">ymin</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.IsoRectangle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.IsoRectangle2.ymin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Circle2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Circle2</code><a class="headerlink" href="#skgeom._skgeom.Circle2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Circle2.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Bbox2<a class="headerlink" href="#skgeom._skgeom.Circle2.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.bounded_side">
+<code class="sig-name descname">bounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.BoundedSide<a class="headerlink" href="#skgeom._skgeom.Circle2.bounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.center">
+<code class="sig-name descname">center</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Circle2.center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.has_on_boundary">
+<code class="sig-name descname">has_on_boundary</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.has_on_boundary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.has_on_bounded_side">
+<code class="sig-name descname">has_on_bounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.has_on_bounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.has_on_negative_side">
+<code class="sig-name descname">has_on_negative_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.has_on_negative_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.has_on_positive_side">
+<code class="sig-name descname">has_on_positive_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.has_on_positive_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.has_on_unbounded_side">
+<code class="sig-name descname">has_on_unbounded_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.has_on_unbounded_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Circle2.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Circle2<a class="headerlink" href="#skgeom._skgeom.Circle2.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.orientation">
+<code class="sig-name descname">orientation</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Sign<a class="headerlink" href="#skgeom._skgeom.Circle2.orientation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.oriented_side">
+<code class="sig-name descname">oriented_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Sign<a class="headerlink" href="#skgeom._skgeom.Circle2.oriented_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.orthogonal_transform">
+<code class="sig-name descname">orthogonal_transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_2&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Circle2<a class="headerlink" href="#skgeom._skgeom.Circle2.orthogonal_transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Circle2.squared_radius">
+<code class="sig-name descname">squared_radius</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Circle2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Circle2.squared_radius" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Transformation2">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Transformation2</code><a class="headerlink" href="#skgeom._skgeom.Transformation2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Transformation2.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#skgeom._skgeom.Transformation2.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded function.</p>
+<ol class="arabic simple">
+<li><p>transform(self: skgeom._skgeom.Transformation2, arg0: skgeom._skgeom.Point2) -&gt; skgeom._skgeom.Point2</p></li>
+<li><p>transform(self: skgeom._skgeom.Transformation2, arg0: skgeom._skgeom.Line2) -&gt; skgeom._skgeom.Line2</p></li>
+<li><p>transform(self: skgeom._skgeom.Transformation2, arg0: skgeom._skgeom.Direction2) -&gt; skgeom._skgeom.Direction2</p></li>
+<li><p>transform(self: skgeom._skgeom.Transformation2, arg0: skgeom._skgeom.Vector2) -&gt; skgeom._skgeom.Vector2</p></li>
+</ol>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="three-dimensional-primitives">
+<h2>Three-dimensional primitives<a class="headerlink" href="#three-dimensional-primitives" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skgeom._skgeom.Point3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Point3</code><a class="headerlink" href="#skgeom._skgeom.Point3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Point3.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; CGAL::Bbox_3<a class="headerlink" href="#skgeom._skgeom.Point3.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.cartesian">
+<code class="sig-name descname">cartesian</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.cartesian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.dimension">
+<code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#skgeom._skgeom.Point3.dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.homogeneous">
+<code class="sig-name descname">homogeneous</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.homogeneous" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.hw">
+<code class="sig-name descname">hw</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.hw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.hx">
+<code class="sig-name descname">hx</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.hx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.hy">
+<code class="sig-name descname">hy</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.hy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.hz">
+<code class="sig-name descname">hz</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.hz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Point3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.x">
+<code class="sig-name descname">x</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.y">
+<code class="sig-name descname">y</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Point3.z">
+<code class="sig-name descname">z</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Point3.z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Vector3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Vector3</code><a class="headerlink" href="#skgeom._skgeom.Vector3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Vector3.cartesian">
+<code class="sig-name descname">cartesian</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.cartesian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.dimension">
+<code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#skgeom._skgeom.Vector3.dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Vector3.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.homogeneous">
+<code class="sig-name descname">homogeneous</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.homogeneous" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.hw">
+<code class="sig-name descname">hw</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.hw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.hx">
+<code class="sig-name descname">hx</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.hx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.hy">
+<code class="sig-name descname">hy</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.hy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.hz">
+<code class="sig-name descname">hz</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.hz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.squared_length">
+<code class="sig-name descname">squared_length</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.squared_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector3<a class="headerlink" href="#skgeom._skgeom.Vector3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.x">
+<code class="sig-name descname">x</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.y">
+<code class="sig-name descname">y</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Vector3.z">
+<code class="sig-name descname">z</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Vector3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Vector3.z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Segment3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Segment3</code><a class="headerlink" href="#skgeom._skgeom.Segment3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Segment3.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; CGAL::Bbox_3<a class="headerlink" href="#skgeom._skgeom.Segment3.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Segment3.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment3.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Segment3.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.max">
+<code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.min">
+<code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Segment3<a class="headerlink" href="#skgeom._skgeom.Segment3.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.source">
+<code class="sig-name descname">source</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.squared_length">
+<code class="sig-name descname">squared_length</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Segment3.squared_length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.supporting_line">
+<code class="sig-name descname">supporting_line</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; CGAL::Line_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Segment3.supporting_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.target">
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em><span class="sig-paren">)</span> &#x2192; CGAL::Vector_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Segment3.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Segment3<a class="headerlink" href="#skgeom._skgeom.Segment3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Segment3.vertex">
+<code class="sig-name descname">vertex</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Segment3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Segment3.vertex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Ray3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Ray3</code><a class="headerlink" href="#skgeom._skgeom.Ray3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Ray3.direction">
+<code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Ray3.direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray3.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Ray3.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Ray3<a class="headerlink" href="#skgeom._skgeom.Ray3.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Ray3.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.second_point">
+<code class="sig-name descname">second_point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Ray3.second_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.source">
+<code class="sig-name descname">source</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Ray3.source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Ray3.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.supporting_line">
+<code class="sig-name descname">supporting_line</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; CGAL::Line_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Ray3.supporting_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.to_vector">
+<code class="sig-name descname">to_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Vector3<a class="headerlink" href="#skgeom._skgeom.Ray3.to_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Ray3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Ray3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Ray3<a class="headerlink" href="#skgeom._skgeom.Ray3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Plane3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Plane3</code><a class="headerlink" href="#skgeom._skgeom.Plane3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Plane3.a">
+<code class="sig-name descname">a</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Plane3.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.b">
+<code class="sig-name descname">b</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Plane3.b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.base1">
+<code class="sig-name descname">base1</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; CGAL::Vector_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Plane3.base1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.base2">
+<code class="sig-name descname">base2</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; CGAL::Vector_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Plane3.base2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.c">
+<code class="sig-name descname">c</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Plane3.c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.d">
+<code class="sig-name descname">d</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Plane3.d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#skgeom._skgeom.Plane3.has_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded function.</p>
+<ol class="arabic simple">
+<li><p>has_on(self: skgeom._skgeom.Plane3, arg0: skgeom._skgeom.Point3) -&gt; bool</p></li>
+<li><p>has_on(self: skgeom._skgeom.Plane3, arg0: CGAL::Line_3&lt;CGAL::Epeck&gt;) -&gt; bool</p></li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.has_on_negative_side">
+<code class="sig-name descname">has_on_negative_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Plane3.has_on_negative_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.has_on_positive_side">
+<code class="sig-name descname">has_on_positive_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Plane3.has_on_positive_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Plane3.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.opposite">
+<code class="sig-name descname">opposite</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Plane3<a class="headerlink" href="#skgeom._skgeom.Plane3.opposite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.oriented_side">
+<code class="sig-name descname">oriented_side</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Sign<a class="headerlink" href="#skgeom._skgeom.Plane3.oriented_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.orthogonal_direction">
+<code class="sig-name descname">orthogonal_direction</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; CGAL::Direction_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Plane3.orthogonal_direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.orthogonal_vector">
+<code class="sig-name descname">orthogonal_vector</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; CGAL::Vector_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Plane3.orthogonal_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.perpendicular_line">
+<code class="sig-name descname">perpendicular_line</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; CGAL::Line_3&lt;CGAL::Epeck&gt;<a class="headerlink" href="#skgeom._skgeom.Plane3.perpendicular_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.point">
+<code class="sig-name descname">point</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Plane3.point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.projection">
+<code class="sig-name descname">projection</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Plane3.projection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.to_2d">
+<code class="sig-name descname">to_2d</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point2<a class="headerlink" href="#skgeom._skgeom.Plane3.to_2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.to_3d">
+<code class="sig-name descname">to_3d</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point2</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Plane3.to_3d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Plane3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Plane3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Plane3<a class="headerlink" href="#skgeom._skgeom.Plane3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skgeom._skgeom.Triangle3">
+<em class="property">class </em><code class="sig-prename descclassname">skgeom._skgeom.</code><code class="sig-name descname">Triangle3</code><a class="headerlink" href="#skgeom._skgeom.Triangle3" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="skgeom._skgeom.Triangle3.bbox">
+<code class="sig-name descname">bbox</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em><span class="sig-paren">)</span> &#x2192; CGAL::Bbox_3<a class="headerlink" href="#skgeom._skgeom.Triangle3.bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.has_on">
+<code class="sig-name descname">has_on</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em>, <em class="sig-param">arg0: skgeom._skgeom.Point3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Triangle3.has_on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.is_degenerate">
+<code class="sig-name descname">is_degenerate</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#skgeom._skgeom.Triangle3.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.squared_area">
+<code class="sig-name descname">squared_area</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.FieldNumberType<a class="headerlink" href="#skgeom._skgeom.Triangle3.squared_area" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.supporting_plane">
+<code class="sig-name descname">supporting_plane</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Plane3<a class="headerlink" href="#skgeom._skgeom.Triangle3.supporting_plane" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em>, <em class="sig-param">arg0: CGAL::Aff_transformation_3&lt;CGAL::Epeck&gt;</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Triangle3<a class="headerlink" href="#skgeom._skgeom.Triangle3.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skgeom._skgeom.Triangle3.vertex">
+<code class="sig-name descname">vertex</code><span class="sig-paren">(</span><em class="sig-param">self: skgeom._skgeom.Triangle3</em>, <em class="sig-param">arg0: int</em><span class="sig-paren">)</span> &#x2192; skgeom._skgeom.Point3<a class="headerlink" href="#skgeom._skgeom.Triangle3.vertex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="convex_hull.html" class="btn btn-neutral float-left" title="Computing a Convex Hull" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Wolf Vollprecht, QuantStack
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
