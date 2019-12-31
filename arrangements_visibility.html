@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Arrangements and Visibility &mdash; scikit-geometry docs 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> scikit-geometry docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygon.html">Polygons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convex_hull.html">Computing a Convex Hull</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_delaunay.html">Voronoi Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Geometric Primitives</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scikit-geometry docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Arrangements and Visibility</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/arrangements_visibility.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Arrangements-and-Visibility">
+<h1>Arrangements and Visibility<a class="headerlink" href="#Arrangements-and-Visibility" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">skgeom</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<p>In this chapter we create a 2D arrangement, and explore how to use it in order to compute the visibility from different positions inside this arrangement.</p>
+<p>A 2D arrangement consists of vertices, segments, and faces.</p>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">insert</span></code>, and <code class="docutils literal notranslate"><span class="pre">insert_point</span></code> function on the arrangement to insert new points into it.</p>
+<p>Then, the arrangement can be queried or iterated upon by using either the <code class="docutils literal notranslate"><span class="pre">find</span></code> function or the iterators.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">M</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">outer</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="p">,</span> <span class="o">-</span><span class="n">M</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">)),</span> <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">)),</span>
+    <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="o">-</span><span class="n">M</span><span class="p">)),</span> <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="o">-</span><span class="n">M</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="p">,</span> <span class="o">-</span><span class="n">M</span><span class="p">))</span>
+<span class="p">]</span>
+
+<span class="n">segments</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+    <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">Segment2</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">Point2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+<span class="p">]</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">arrangement</span><span class="o">.</span><span class="n">Arrangement</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">outer</span><span class="p">:</span>
+    <span class="n">arr</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+    <span class="n">arr</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now the arrangement can be iterated upon with the <code class="docutils literal notranslate"><span class="pre">halfedges</span></code> iterator property. Note that the segments that have been inserted are split at their intersections.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">he</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">he</span><span class="o">.</span><span class="n">curve</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/arrangements_visibility_5_0.svg" src="_images/arrangements_visibility_5_0.svg" /></div>
+</div>
+<div class="section" id="Finding-things-in-the-arrangement">
+<h2>Finding things in the arrangement<a class="headerlink" href="#Finding-things-in-the-arrangement" title="Permalink to this headline">¶</a></h2>
+<p>We can find the face associated with a certain point in the arrangement, and use the <code class="docutils literal notranslate"><span class="pre">outer_ccb</span></code> circulator to iterate over the halfedges associated with the face.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">q</span> <span class="o">=</span> <span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">face</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">i</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">outer_ccb</span>
+<span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="n">halfedge</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">while</span> <span class="n">first</span> <span class="o">!=</span> <span class="n">halfedge</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">halfedge</span><span class="o">.</span><span class="n">source</span><span class="p">()</span><span class="o">.</span><span class="n">point</span><span class="p">(),</span> <span class="n">halfedge</span><span class="o">.</span><span class="n">target</span><span class="p">()</span><span class="o">.</span><span class="n">point</span><span class="p">())</span>
+    <span class="n">halfedge</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">halfedge</span><span class="o">.</span><span class="n">source</span><span class="p">()</span><span class="o">.</span><span class="n">point</span><span class="p">(),</span> <span class="n">halfedge</span><span class="o">.</span><span class="n">target</span><span class="p">()</span><span class="o">.</span><span class="n">point</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+PointC2(10, 10) PointC2(-10, 10)
+PointC2(-10, 10) PointC2(-10, -10)
+PointC2(-10, -10) PointC2(10, -10)
+PointC2(10, -10) PointC2(10, 10)
+</pre></div></div>
+</div>
+<p>Similarly, if we query a point that is lying on a halfedge, or a vertex itself we get either a halfedge or a vertex in return.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">vertex</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">Point2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">vertex</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;skgeom._skgeom.arrangement.Vertex at 0x7fe52bc65960&gt;
+</pre></div></div>
+</div>
+<div class="section" id="Computing-Visibility">
+<h3>Computing Visibility<a class="headerlink" href="#Computing-Visibility" title="Permalink to this headline">¶</a></h3>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">RotationalSweepVisibility</span></code> class to compute the visibility from a specific point inside the arrangement.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">vs</span> <span class="o">=</span> <span class="n">RotationalSweepVisibility</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">q</span> <span class="o">=</span> <span class="n">Point2</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">face</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="n">vx</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">compute_visibility</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">face</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">he</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">he</span><span class="o">.</span><span class="n">curve</span><span class="p">(),</span> <span class="n">visible_point</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vx</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">curve</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">visible_point</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/arrangements_visibility_16_0.svg" src="_images/arrangements_visibility_16_0.svg" /></div>
+</div>
+<p>An additional, faster method to compute the visibility is also available, the <code class="docutils literal notranslate"><span class="pre">TriangularExpansionVisibility</span></code>. However, the <code class="docutils literal notranslate"><span class="pre">TriangularExpansionVisibility</span></code> requires a one-time initialization cost to be paid. You can read more about both algorithms here: <a class="reference external" href="https://doc.cgal.org/latest/Visibility_2/index.html">https://doc.cgal.org/latest/Visibility_2/index.html</a></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ts</span> <span class="o">=</span> <span class="n">RotationalSweepVisibility</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">compute_visibility</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">face</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">he</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">he</span><span class="o">.</span><span class="n">curve</span><span class="p">(),</span> <span class="n">visible_point</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tx</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">curve</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">visible_point</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">draw</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/arrangements_visibility_19_0.svg" src="_images/arrangements_visibility_19_0.svg" /></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Wolf Vollprecht, QuantStack
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
