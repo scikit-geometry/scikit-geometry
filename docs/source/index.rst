@@ -13,6 +13,8 @@ Welcome to scikit-geometry docs's documentation!
    introduction
    polygon
    convex_hull
+   arrangements_visibility
+   voronoi_delaunay
    reference
 
 Indices and tables
