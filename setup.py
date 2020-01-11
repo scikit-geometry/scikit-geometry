@@ -180,4 +180,5 @@ setup(
     setup_requires=['pybind11>=2.3'],
     cmdclass={'build_ext': BuildExt},
     zip_safe=False,
+    packages=['skgeom'],
 )
