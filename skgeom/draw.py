@@ -246,7 +246,7 @@ def draw_polygon(
     polygon_with_holes=None,
     vertices=None,
     plt=plt,
-    facecolor="none",
+    facecolor="lightgray",
     point_color="none",
     line_width=2,
     plot_vertices=True,
@@ -338,6 +338,8 @@ def draw(obj, **kwargs):
         draw_circle(obj, **kwargs)
     elif isinstance(obj, skgeom._skgeom.Polygon):
         draw_polygon(obj, **kwargs)
+    elif isinstance(obj, skgeom._skgeom.PolygonWithHoles):
+        draw_polygon(obj.outer_boundary(), polygon_with_holes=obj, **kwargs)
     elif isinstance(obj, skgeom._skgeom.voronoi.VoronoiDiagram):
         draw_voronoi(obj, **kwargs)
     elif isinstance(obj, list):
