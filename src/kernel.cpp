@@ -100,6 +100,8 @@ void init_skgeom_kernel(py::module &m) {
     ;
 
     py::class_<Vector_2>(m, "Vector2") 
+        .def(py::init<double, double>())
+        .def(py::init<int, int>())
     	.def(py::init<Point_2, Point_2>())
         .def(py::init<Ray_2>())
         .def(py::init<Segment_2>())
@@ -120,6 +122,10 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self / double())
         .def(py::self + Vector_2())
         .def(py::self - Vector_2())
+        .def(py::self += Vector_2())
+        .def(py::self -= Vector_2())
+        .def(py::self == Vector_2())
+        .def(py::self != Vector_2())
         .def("__repr__", &toString<Vector_2>)
     ;
 
