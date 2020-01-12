@@ -3,6 +3,10 @@
 
 #include <pybind11/numpy.h>
 
+#include <CGAL/Random.h>
+#include <CGAL/random_polygon_2.h>
+#include <CGAL/point_generators_2.h>
+
 std::vector<Segment_2> get_edges(Polygon_2 p) {
 	auto seg_begin = p.edges_begin();
 	std::vector<Segment_2> result;
@@ -64,6 +68,31 @@ void init_polygon(py::module &m) {
     ;
 
     m.def("centroid", &centroid);
+
+    m.def("random_polygon", [](int n, const std::string &shape, double size, unsigned int seed) {
+        std::unique_ptr<Polygon_2> polygon(new Polygon_2);
+        auto inserter = std::back_inserter(*polygon);
+
+        std::optional<CGAL::Random> custom_random;
+        if (seed != 0) {
+            custom_random = CGAL::Random(seed);
+        }
+        auto &random = (seed == 0) ? CGAL::get_default_random() : *custom_random;
+
+        if (shape == "square") {
+            CGAL::random_polygon_2(n, inserter,
+                CGAL::Random_points_in_square_2<Point_2>(size, random));
+        } else if (shape == "disc") {
+            CGAL::random_polygon_2(n, inserter,
+                CGAL::Random_points_in_disc_2<Point_2>(size, random));
+        } else if (shape == "circle") {
+            CGAL::random_polygon_2(n, inserter,
+                CGAL::Random_points_on_circle_2<Point_2>(size, random));
+        } else {
+            throw std::runtime_error("unsupported shape " + shape);
+        }
+        return polygon.release();
+    }, py::arg("n") = 7, py::arg("shape") = "square", py::arg("size") = 0.5, py::arg("seed") = 0);
 
     py::class_<Polygon_with_holes_2>(m, "PolygonWithHoles")
         .def(py::init([](const Polygon_2& outer, const std::vector<Polygon_2>& holes) {
