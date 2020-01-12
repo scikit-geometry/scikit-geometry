@@ -1,6 +1,6 @@
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-import sys, os, glob
+import sys, os, glob, re
 import setuptools
 
 
@@ -61,6 +61,20 @@ if os.getenv('CONDA_PREFIX') or os.getenv('MINICONDAPATH'):
         print("Names of adjusted CGAL libs: ", adjusted_cgal_libs)
 
     include_dirs.insert(1, os.path.join(prefix, 'include'))
+
+cgal_version = None
+if os.path.exists('/usr/local/include/CGAL/version.h'):
+    with open('/usr/local/include/CGAL/version.h', 'r') as f:
+        m = re.search(r'#define\s+CGAL_VERSION\s+(.+)', f.read())
+        if m:
+            cgal_version = tuple(map(int, m.group(1).split('.')))
+
+if cgal_version:
+    print("Found CGAL version: " + '.'.join(map(str, cgal_version)))
+    if cgal_version >= (5, 0):
+        cgal_libs = []  # header only now.
+else:
+    print("Could not determine CGAL version.")
 
 ext_modules = [
     Extension(
