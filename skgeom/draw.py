@@ -253,31 +253,25 @@ def draw_polygon(
 ):
     fig, ax = plt.gcf(), plt.gca()
     vertices = to_list_of_tuples(polygon.vertices) + [(0, 0)]
-    polygon_length = 0
 
-    for v in polygon.vertices:
-        polygon_length += 1
-        if plot_vertices:
+    if plot_vertices:
+        for v in polygon.vertices:
             draw_point(v, color=point_color)
 
-    codes = [Path.MOVETO] + [Path.LINETO] * (polygon_length - 1) + [Path.CLOSEPOLY]
-    path = Path(vertices, codes)
-    plt.gca().add_patch(patches.PathPatch(path, facecolor=facecolor, lw=line_width))
+    codes = [Path.MOVETO] + [Path.LINETO] * (len(vertices) - 2) + [Path.CLOSEPOLY]
 
     if polygon_with_holes:
         for hole in polygon_with_holes.holes:
-            hole_length = 0
-            vertices = to_list_of_tuples(hole.vertices) + [(0, 0)]
-            for v in hole.vertices:
-                hole_length += 1
-                if plot_vertices:
+            if plot_vertices:
+                for v in hole.vertices:
                     draw_point(v, color=point_color)
 
-            codes = [Path.MOVETO] + [Path.LINETO] * (hole_length - 1) + [Path.CLOSEPOLY]
-            path = Path(vertices, codes)
-            plt.gca().add_patch(
-                patches.PathPatch(path, facecolor="white", lw=line_width)
-            )
+            hole_vertices = list(to_list_of_tuples(hole.vertices)) + [(0, 0)]
+            codes.extend([Path.MOVETO] + [Path.LINETO] * (len(hole_vertices) - 2) + [Path.CLOSEPOLY])
+            vertices.extend(hole_vertices)
+
+    path = Path(vertices, codes)
+    plt.gca().add_patch(patches.PathPatch(path, facecolor=facecolor, lw=line_width))
 
     plt.gca().relim()
     plt.gca().autoscale_view()
