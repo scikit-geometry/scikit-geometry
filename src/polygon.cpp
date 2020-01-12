@@ -61,6 +61,10 @@ void init_polygon(py::module &m) {
     	.def("area", &Polygon_2::area)
         .def("oriented_side", &Polygon_2::oriented_side)
         .def("__repr__", &toString<Polygon_2>)
+        .def("_ipython_display_", [](Polygon_2& s) {
+            py::module::import("skgeom.draw").attr("draw_polygon")(
+                s, py::arg("facecolor") = "lightgray");
+        })
     ;
 
     m.def("centroid", &centroid);
@@ -84,5 +88,11 @@ void init_polygon(py::module &m) {
             return py::make_iterator(p.holes_begin(), p.holes_end());
         }, py::keep_alive<0, 1>())
         .def("__repr__", &toString<Polygon_with_holes_2>)
+        .def("_ipython_display_", [](Polygon_with_holes_2& s) {
+            py::module::import("skgeom.draw").attr("draw_polygon")(
+                s.outer_boundary(),
+                py::arg("polygon_with_holes") = s,
+                py::arg("facecolor") = "lightgray");
+        })
     ;
 }
