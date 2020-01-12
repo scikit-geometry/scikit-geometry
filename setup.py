@@ -76,6 +76,11 @@ if cgal_version:
 else:
     print("Could not determine CGAL version.")
 
+if sys.platform == 'darwin' and glob.glob('/usr/local/lib/libboost*-mt*'):
+    boost_mt = True
+else:
+    boost_mt = False
+
 ext_modules = [
     Extension(
         'skgeom._skgeom',
@@ -101,6 +106,8 @@ ext_modules = [
                    'gmp', 
                    'boost_thread',
                    'boost_atomic',
+                   'boost_thread-mt' if boost_mt else 'boost_thread',
+                   'boost_atomic-mt' if boost_mt else 'boost_atomic',
                    'boost_system',
                    'boost_date_time',
                    'boost_chrono'],
