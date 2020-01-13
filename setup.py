@@ -98,7 +98,8 @@ ext_modules = [
             'src/polyhedron.cpp',
             'src/aabb_tree.cpp',
             'src/voronoi_delaunay.cpp',
-            'src/optimal_transport.cpp'
+            'src/optimal_transport.cpp',
+            'src/skeleton.cpp'
         ],
         include_dirs=include_dirs,
         library_dirs=library_dirs,
