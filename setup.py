@@ -105,8 +105,6 @@ ext_modules = [
         library_dirs=library_dirs,
         libraries=cgal_libs + ['mpfr',
                    'gmp', 
-                   'boost_thread',
-                   'boost_atomic',
                    'boost_thread-mt' if boost_mt else 'boost_thread',
                    'boost_atomic-mt' if boost_mt else 'boost_atomic',
                    'boost_system',
