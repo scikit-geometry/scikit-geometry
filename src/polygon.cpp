@@ -77,7 +77,7 @@ void init_polygon(py::module &m) {
         std::unique_ptr<Polygon_2> polygon(new Polygon_2);
         auto inserter = std::back_inserter(*polygon);
 
-        std::optional<CGAL::Random> custom_random;
+        boost::optional<CGAL::Random> custom_random;
         if (seed != 0) {
             custom_random = CGAL::Random(seed);
         }
