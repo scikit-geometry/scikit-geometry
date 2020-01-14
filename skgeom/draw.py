@@ -250,6 +250,7 @@ def draw_polygon(
     point_color="none",
     line_width=2,
     plot_vertices=True,
+    aspect_ratio=1,
 ):
     fig, ax = plt.gcf(), plt.gca()
     vertices = to_list_of_tuples(polygon.vertices) + [(0, 0)]
@@ -275,6 +276,8 @@ def draw_polygon(
 
     plt.gca().relim()
     plt.gca().autoscale_view()
+    if aspect_ratio is not None:
+        plt.gca().set_aspect(aspect_ratio)
 
 
 def draw_voronoi(
@@ -285,6 +288,7 @@ def draw_voronoi(
     sites_color="red",
     vertices_color="None",
     finite_edges_color="blue",
+    aspect_ratio=1,
 ):
     fig, ax = plt.gcf(), plt.gca()
     for edge in voronoi.edges:
@@ -309,6 +313,9 @@ def draw_voronoi(
 
     plt.xlim(bbox.xmin() - display_range, bbox.xmax() + display_range)
     plt.ylim(bbox.ymin() - display_range, bbox.ymax() + display_range)
+
+    if aspect_ratio is not None:
+        plt.gca().set_aspect(aspect_ratio)
 
 
 def draw(obj, **kwargs):
