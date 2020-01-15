@@ -27,6 +27,7 @@ void init_voronoi_delaunay(py::module&);
 void init_optimal_transport(py::module&);
 void init_polygon_offset(py::module&);
 void init_skeleton(py::module&);
+void init_simplification(py::module&);
 
 
 PYBIND11_MODULE(_skgeom, m) {
@@ -48,4 +49,5 @@ PYBIND11_MODULE(_skgeom, m) {
     init_optimal_transport(m);
     // init_polygon_offset(m);
     init_skeleton(m);
+    init_simplification(m);
 }
