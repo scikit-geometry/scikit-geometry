@@ -176,8 +176,10 @@ class BuildExt(build_ext):
             opts.append(cpp_flag(self.compiler))
             if has_flag(self.compiler, '-fvisibility=hidden'):
                 opts.append('-fvisibility=hidden')
+            opts.append('-DCGAL_DEBUG=1')
         elif ct == 'msvc':
             opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
+            opts.append('/DCGAL_DEBUG=1')
         for ext in self.extensions:
             ext.extra_compile_args = opts
             ext.extra_link_args = link_opts
