@@ -280,6 +280,15 @@ def draw_polygon(
         plt.gca().set_aspect(aspect_ratio)
 
 
+def draw_polygon_with_hole(polygon_with_hole, **kwargs):
+    draw_polygon(polygon_with_hole.outer_boundary(), polygon_with_holes=polygon_with_hole, **kwargs)
+
+
+def draw_polygon_set(polygon_set, **kwargs):
+    for polygon in polygon_set.polygons:
+        draw_polygon_with_hole(polygon, **kwargs)
+
+
 def draw_voronoi(
     voronoi,
     display_range=3,
@@ -340,7 +349,9 @@ def draw(obj, **kwargs):
     elif isinstance(obj, skgeom._skgeom.Polygon):
         draw_polygon(obj, **kwargs)
     elif isinstance(obj, skgeom._skgeom.PolygonWithHoles):
-        draw_polygon(obj.outer_boundary(), polygon_with_holes=obj, **kwargs)
+        draw_polygon_with_hole(obj, **kwargs)
+    elif isinstance(obj, skgeom._skgeom.PolygonSet):
+        draw_polygon_set(obj, **kwargs)
     elif isinstance(obj, skgeom._skgeom.voronoi.VoronoiDiagram):
         draw_voronoi(obj, **kwargs)
     elif isinstance(obj, list):

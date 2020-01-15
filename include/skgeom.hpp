@@ -4,6 +4,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Polygon_set_2.h>
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/partition_2.h>
@@ -36,6 +37,7 @@ typedef Kernel::Aff_transformation_2                        Transformation_2;
 typedef Kernel::Circle_2                                    Circle_2;
 typedef CGAL::Polygon_2<Kernel>                             Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>                  Polygon_with_holes_2;
+typedef CGAL::Polygon_set_2<Kernel>                         Polygon_set_2;
 
 typedef CGAL::Bbox_2                                        Bbox_2;
 typedef CGAL::Bbox_3                                        Bbox_3;

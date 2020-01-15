@@ -85,6 +85,7 @@ ext_modules = [
     Extension(
         'skgeom._skgeom',
         [
+            'src/polygon_set.cpp',
             'src/skgeom.cpp',
             'src/kernel.cpp',
             'src/polygon.cpp',
