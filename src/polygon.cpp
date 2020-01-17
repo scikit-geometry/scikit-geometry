@@ -56,6 +56,18 @@ void init_polygon(py::module &m) {
         .def_property_readonly("edges", [](Polygon_2& s) {
             return py::make_iterator(s.edges_begin(), s.edges_end()); 
         }, py::keep_alive<0, 1>())
+        .def_property_readonly("coords", [](Polygon_2& s) {
+            py::array_t<double, py::array::c_style> coords;
+            coords.resize({s.size(), size_t(2)});
+            auto r = coords.mutable_unchecked<2>();
+            size_t i = 0;
+            for (auto v = s.vertices_begin(); v != s.vertices_end(); v++, i++) {
+                r(i, 0) = CGAL::to_double(v->x());
+                r(i, 1) = CGAL::to_double(v->y());
+            }
+            assert(i == s.size());
+            return coords;
+        })
     	.def("__len__", &Polygon_2::size)
     	.def("is_simple", &Polygon_2::is_simple)
     	.def("is_convex", &Polygon_2::is_convex)
