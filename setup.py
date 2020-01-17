@@ -27,7 +27,32 @@ include_dirs = [
 library_dirs = None
 cgal_libs = ["CGAL", "CGAL_Core"]
 
-if os.getenv('CONDA_PREFIX') or os.getenv('MINICONDAPATH'):
+conda_prefix = os.getenv('CONDA_PREFIX')
+if not conda_prefix:
+    conda_prefix = os.getenv('MINICONDAPATH')
+
+if conda_prefix:
+    cgal_include = os.path.join(conda_prefix, 'include', 'CGAL')
+else:
+    cgal_include = '/usr/local/include/CGAL/'
+
+cgal_version = None
+if os.path.exists(os.path.join(cgal_include, 'version.h')):
+    with open(os.path.join(cgal_include, 'version.h'), 'r') as f:
+        m = re.search(r'#define\s+CGAL_VERSION\s+(.+)', f.read())
+        if m:
+            cgal_version = tuple(map(int, m.group(1).split('.')))
+
+if cgal_version:
+    print("Found CGAL version: " + '.'.join(map(str, cgal_version)))
+else:
+    print("Could not determine CGAL version.")
+    cgal_version = (5, 0)
+
+if cgal_version >= (5, 0):
+    cgal_libs = []  # header only now.
+
+if conda_prefix:
 
     if sys.platform.startswith('win'):
         prefix = os.path.join(sys.prefix, 'Library\\')
@@ -37,44 +62,33 @@ if os.getenv('CONDA_PREFIX') or os.getenv('MINICONDAPATH'):
     print("Looking for CGAL in: ", prefix)
 
     extra_link_args = []
-    if sys.platform == 'darwin':
+    if sys.platform == 'darwin' and cgal_version < (5, 0):
         extra_link_args = ['-Wl,-rpath', '-Wl,%s' % os.path.abspath(prefix)]
 
 
     if sys.platform == 'win32':
         library_dir = os.path.join(prefix, 'lib')
-        # currently we also need to add the apparently windows specific suffix here, it's unclear if this is 
-        # necessary if CGAL is installed not from CONDA.
-        # suffix = "-vc140-mt-4.14.1"
-        adjusted_cgal_libs = []
-        for lib in cgal_libs:
-            candidates = glob.glob(os.path.join(library_dir, lib) + '*.lib')
-            if not candidates:
-                raise RuntimeError("Library not found [[{}]]".format(lib))
-            c = os.path.basename(candidates[0])
-            c = os.path.splitext(c)[0]
-            adjusted_cgal_libs.append(c)
-        cgal_libs = adjusted_cgal_libs
+
+        if cgal_version < (5, 0):
+            # currently we also need to add the apparently windows specific suffix here, it's unclear if this is 
+            # necessary if CGAL is installed not from CONDA.
+            # suffix = "-vc140-mt-4.14.1"
+            adjusted_cgal_libs = []
+            for lib in cgal_libs:
+                candidates = glob.glob(os.path.join(library_dir, lib) + '*.lib')
+                if not candidates:
+                    raise RuntimeError("Library not found [[{}]]".format(lib))
+                c = os.path.basename(candidates[0])
+                c = os.path.splitext(c)[0]
+                adjusted_cgal_libs.append(c)
+            cgal_libs = adjusted_cgal_libs
+            print("Names of adjusted CGAL libs: ", adjusted_cgal_libs)
 
         library_dirs = [library_dir]
-        print("Looking for CGAL library in ", library_dirs)
-        print("Names of adjusted CGAL libs: ", adjusted_cgal_libs)
+        print("Looking for libraries in ", library_dirs)
 
-    include_dirs.insert(1, os.path.join(prefix, 'include'))
-
-cgal_version = None
-if os.path.exists('/usr/local/include/CGAL/version.h'):
-    with open('/usr/local/include/CGAL/version.h', 'r') as f:
-        m = re.search(r'#define\s+CGAL_VERSION\s+(.+)', f.read())
-        if m:
-            cgal_version = tuple(map(int, m.group(1).split('.')))
-
-if cgal_version:
-    print("Found CGAL version: " + '.'.join(map(str, cgal_version)))
-    if cgal_version >= (5, 0):
-        cgal_libs = []  # header only now.
-else:
-    print("Could not determine CGAL version.")
+    if cgal_version < (5, 0):
+        include_dirs.insert(1, os.path.join(prefix, 'include'))
 
 if sys.platform == 'darwin' and glob.glob('/usr/local/lib/libboost*-mt*'):
     boost_mt = True
@@ -85,6 +99,7 @@ ext_modules = [
     Extension(
         'skgeom._skgeom',
         [
+            'src/simplification.cpp',
             'src/polygon_set.cpp',
             'src/skgeom.cpp',
             'src/kernel.cpp',
