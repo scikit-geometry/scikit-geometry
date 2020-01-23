@@ -11,10 +11,23 @@ Welcome to scikit-geometry docs's documentation!
    :caption: Contents:
 
    introduction
-   polygon
    convex_hull
    arrangements_visibility
    voronoi_delaunay
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Polygons:
+
+   polygon
+   polygon_set
+   simplify
+   skeleton
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Polygons:
+
    reference
 
 Indices and tables

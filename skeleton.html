@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Polygonal skeletons (straight skeletons) &mdash; scikit-geometry docs 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Geometric Primitives" href="reference.html" />
+    <link rel="prev" title="Basics" href="simplify.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> scikit-geometry docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convex_hull.html">Computing a Convex Hull</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrangements_visibility.html">Arrangements and Visibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_delaunay.html">Voronoi Diagrams</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Polygons:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="polygon.html">Polygons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygon_set.html">Polygon Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplify.html">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplify.html#Modes">Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplify.html#Topology">Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplify.html#More-Topology">More Topology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Polygonal skeletons (straight skeletons)</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Polygons:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Geometric Primitives</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scikit-geometry docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Polygonal skeletons (straight skeletons)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/skeleton.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Polygonal-skeletons-(straight-skeletons)">
+<h1>Polygonal skeletons (straight skeletons)<a class="headerlink" href="#Polygonal-skeletons-(straight-skeletons)" title="Permalink to this headline">¶</a></h1>
+<p>scikit-geometry contains functions to work with straight skeletons of polygons. The straight skeleton can be used to create inset or offset polygons from a polygon, or a polygon with holes.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">skgeom</span> <span class="k">as</span> <span class="nn">sg</span>
+<span class="kn">from</span> <span class="nn">skgeom.draw</span> <span class="kn">import</span> <span class="n">draw</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">draw_skeleton</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">show_time</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">draw</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">halfedges</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">is_bisector</span><span class="p">:</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">point</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">opposite</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">point</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p1</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">p2</span><span class="o">.</span><span class="n">x</span><span class="p">()],</span> <span class="p">[</span><span class="n">p1</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">p2</span><span class="o">.</span><span class="n">y</span><span class="p">()],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_time</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">vertices</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">v</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()),</span>
+                <span class="n">v</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">poly</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">random_polygon</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">skel</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">create_interior_straight_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+<span class="n">draw_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">skel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_3_0.svg" src="_images/skeleton_3_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">draw_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">skel</span><span class="p">,</span> <span class="n">show_time</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_4_0.svg" src="_images/skeleton_4_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">skel</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">create_exterior_straight_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">draw_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">skel</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_5_0.svg" src="_images/skeleton_5_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">skel</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">create_interior_straight_skeleton</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+<span class="n">draw</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">offset_poly</span> <span class="ow">in</span> <span class="n">skel</span><span class="o">.</span><span class="n">offset_polygons</span><span class="p">(</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="n">draw</span><span class="p">(</span><span class="n">offset_poly</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_6_0.svg" src="_images/skeleton_6_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">skgeom</span> <span class="kn">import</span> <span class="n">boolean_set</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="n">poly_with_holes</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">boolean_set</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">skel</span><span class="o">.</span><span class="n">offset_polygons</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">poly</span><span class="p">)</span>
+<span class="n">draw</span><span class="p">(</span><span class="n">poly_with_holes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_7_0.svg" src="_images/skeleton_7_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">draw_skeleton</span><span class="p">(</span><span class="n">poly_with_holes</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">skeleton</span><span class="o">.</span><span class="n">create_interior_straight_skeleton</span><span class="p">(</span><span class="n">poly_with_holes</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/skeleton_8_0.svg" src="_images/skeleton_8_0.svg" /></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Geometric Primitives" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="simplify.html" class="btn btn-neutral float-left" title="Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Wolf Vollprecht, QuantStack
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
