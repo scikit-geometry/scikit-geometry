@@ -26,7 +26,7 @@ Welcome to scikit-geometry docs's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Polygons:
+   :caption: Reference:
 
    reference
 

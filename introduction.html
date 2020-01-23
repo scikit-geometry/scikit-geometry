@@ -98,12 +98,11 @@
 <p class="caption"><span class="caption-text">Polygons:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="polygon.html">Polygons</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplify.html">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplify.html#Modes">Modes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplify.html#Topology">Topology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplify.html#More-Topology">More Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygon_set.html">Polygon Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplify.html">Polygon Simplification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skeleton.html">Polygonal skeletons (straight skeletons)</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Polygons:</span></p>
+<p class="caption"><span class="caption-text">Reference:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Geometric Primitives</a></li>
 </ul>
@@ -349,7 +348,8 @@ PointC2(0.882353, 0.0588235)
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Segment2</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">r</span><span class="p">(),</span> <span class="n">r</span><span class="p">()),</span> <span class="n">sg</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">r</span><span class="p">(),</span> <span class="n">r</span><span class="p">())))</span>
+    <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Segment2</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">r</span><span class="p">(),</span> <span class="n">r</span><span class="p">()),</span>
+                                <span class="n">sg</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">r</span><span class="p">(),</span> <span class="n">r</span><span class="p">())))</span>
 
 <span class="n">intersections</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -379,6 +379,15 @@ PointC2(0.882353, 0.0588235)
 <li><p>Visibility polygons from two-dimensional arrangements</p></li>
 <li><p>Compute the Minkowski sum of two polygons</p></li>
 </ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
