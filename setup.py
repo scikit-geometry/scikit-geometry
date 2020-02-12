@@ -115,7 +115,8 @@ ext_modules = [
             'src/aabb_tree.cpp',
             'src/voronoi_delaunay.cpp',
             'src/optimal_transport.cpp',
-            'src/skeleton.cpp'
+            'src/skeleton.cpp',
+            'src/inscribed.cpp'
         ],
         include_dirs=include_dirs,
         library_dirs=library_dirs,
