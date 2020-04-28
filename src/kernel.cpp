@@ -49,6 +49,11 @@ bool do_intersect(T1 p, T2 q) {
     .def(+py::self)  \
 
 
+void info()
+{
+    std::cout << "demo";
+}
+
 void init_skgeom_kernel(py::module &m) {
 
     py::class_<Kernel::FT>(m, "FieldNumberType")
@@ -77,6 +82,7 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
         .def(py::init<Kernel::FT, Kernel::FT>())
         .def(py::init<int, int>())
+        .def("info", &info)
         .def("x", &Point_2::x)
         .def("y", &Point_2::y)
         .def("hx", &Point_2::hx)
@@ -346,6 +352,17 @@ void init_skgeom_kernel(py::module &m) {
         .def("__repr__", &toString<Transformation_2>)
 	;
 
+    // =====================================================================================
+    //
+    //            ____  _____ 
+    //           |___ \|  __ \ 
+    //             __) | |  | |
+    //            |__ <| |  | |
+    //            ___) | |__| |
+    //           |____/|_____/ 
+    //
+    // =====================================================================================
+
     py::class_<Point_3>(m, "Point3")
         .def(py::init<>())
         .def(py::init<Point_3>())
@@ -376,6 +393,33 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self - Point_3())
         .def(py::self - Vector_3())
         .def(py::self - CGAL::Origin())
+    ;
+
+    py::class_<Line_3>(m, "Line3")
+        .def(py::init<Point_3, Point_3>())
+    	.def(py::init<Point_3, Direction_3>())
+        .def(py::init<Point_3, Vector_3>())
+    	.def(py::init<Segment_3>())
+    	.def(py::init<Ray_3>())
+
+        //.def("point", (Point_3 (Line_3::*)(const FT))&Line_3::point)  // TODO: why does this not work?
+        //.def("point", py::overload_cast<void>(&Line_3::point)  // ??? Should type be FT
+        .def("projection", &Line_3::projection)
+
+        .def("is_degenerate", &Line_3::is_degenerate)
+
+        .def("has_on", &Line_3::has_on)
+
+        .def("perpendicular_plane", &Line_3::perpendicular_plane)
+        .def("opposite", &Line_3::opposite)
+        .def("to_vector", &Line_3::to_vector)
+        .def("direction", &Line_3::direction)
+        .def("transform", &Line_3::transform)
+
+        .def(py::self == Line_3())
+        .def(py::self != Line_3())
+
+        .def("__repr__", &toString<Line_3>)
     ;
 
     py::class_<Plane_3>(m, "Plane3")
@@ -532,9 +576,13 @@ void init_skgeom_kernel(py::module &m) {
     m.def("do_intersect", &do_intersect<Segment_2, Segment_2>);
     m.def("do_intersect", &do_intersect<Ray_2, Line_2>);
     m.def("do_intersect", &do_intersect<Ray_2, Segment_2>);
-
+    
     m.def("intersection", &intersect<Line_2, Line_2>);
     m.def("intersection", &intersect<Line_2, Segment_2>);
     m.def("intersection", &intersect<Segment_2, Segment_2>);
     m.def("intersection", &intersect<Ray_2, Segment_2>);
+
+    // 3D
+    m.def("do_intersect", &do_intersect<Line_3, Line_3>);
+    m.def("intersection", &intersect<Line_3, Line_3>);
 }
