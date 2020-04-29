@@ -689,7 +689,7 @@ void init_skgeom_kernel(py::module &m) {
 
     // ok till here
 
-    m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
+    //m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
     m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);
     m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
 
