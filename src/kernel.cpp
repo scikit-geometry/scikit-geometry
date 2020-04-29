@@ -392,17 +392,11 @@ void init_skgeom_kernel(py::module &m) {
         .def("is_even", &Aff_transformation_3::is_even)
         .def("is_odd", &Aff_transformation_3::is_odd)
 
-      //  .def("transform", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
-      //  .def("transform", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
-      //  .def("transform", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
-      //  .def("transform", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
-//
-      //  .def("__call__", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
-      //  .def("__call__", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
-      //  .def("__call__", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
-      //  .def("__call__", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
-      //   .def("__repr__", &toString<Aff_transformation_3>)
-      ;
+        .def("cartesian", &Aff_transformation_3::cartesian)
+        .def("m", &Aff_transformation_3::m)
+        .def("homogeneous", &Aff_transformation_3::homogeneous)
+        .def("hm", &Aff_transformation_3::hm)
+     ;
 
     py::class_<Point_3>(m, "Point3")
         .def(py::init<>())
@@ -431,6 +425,7 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self <= Point_3())
         .def(py::self >= Point_3())
         .def(py::self + Vector_3())
+        //.def(py::self + Point_3())
         .def(py::self - Point_3())
         .def(py::self - Vector_3())
         .def(py::self - CGAL::Origin())
