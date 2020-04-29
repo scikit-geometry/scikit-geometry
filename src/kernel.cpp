@@ -687,15 +687,15 @@ void init_skgeom_kernel(py::module &m) {
     m.def("do_intersect", &do_intersect<Plane_3, Sphere_3>);
     m.def("do_intersect", &do_intersect<Plane_3, Triangle_3>);
 
-    // m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
-    // m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);
-    // m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
+    m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
+    m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
 
     m.def("do_intersect", &do_intersect<Segment_3, Segment_3>);
-    // m.def("do_intersect", &do_intersect<Segment_3, Triangle_3>);
+    m.def("do_intersect", &do_intersect<Segment_3, Triangle_3>);
 
-    // m.def("do_intersect", &do_intersect<Sphere_3, Sphere_3>);
-    // m.def("do_intersect", &do_intersect<Triangle_3, Triangle_3>);
+    m.def("do_intersect", &do_intersect<Sphere_3, Sphere_3>);
+    m.def("do_intersect", &do_intersect<Triangle_3, Triangle_3>);
 
 
     // intersection, same combinations
