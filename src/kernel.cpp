@@ -403,7 +403,7 @@ void init_skgeom_kernel(py::module &m) {
     	.def(py::init<Ray_3>())
 
         //.def("point", (Point_3 (Line_3::*)(const FT))&Line_3::point)  // TODO: why does this not work?
-        //.def("point", py::overload_cast<void>(&Line_3::point)  // ??? Should type be FT
+        //.def("point", py::overload_cast<void>(&Line_3::point)         // ??? Should type be FT
         .def("projection", &Line_3::projection)
 
         .def("is_degenerate", &Line_3::is_degenerate)
@@ -562,14 +562,37 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self != Triangle_3())
     ;
 
-    // TODO add all combinations
+    // 2D
+
     m.def("squared_distance", &sqdpy<Point_2, Point_2>);
-    m.def("squared_distance", &sqdpy<Line_2, Line_2>);
-    m.def("squared_distance", &sqdpy<Segment_2, Segment_2>);
-    m.def("squared_distance", &sqdpy<Ray_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Triangle_2>);
+
     m.def("squared_distance", &sqdpy<Line_2, Point_2>);
-    m.def("squared_distance", &sqdpy<Segment_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Ray_2>);
     m.def("squared_distance", &sqdpy<Line_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Ray_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Segment_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Triangle_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Triangle_2>);
 
     m.def("do_intersect", &do_intersect<Line_2, Line_2>);
     m.def("do_intersect", &do_intersect<Line_2, Segment_2>);
@@ -583,6 +606,85 @@ void init_skgeom_kernel(py::module &m) {
     m.def("intersection", &intersect<Ray_2, Segment_2>);
 
     // 3D
+
+    m.def("squared_distance", &sqdpy<Line_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Plane_3>);
+
+    m.def("squared_distance", &sqdpy<Point_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Plane_3>);
+    
+    m.def("squared_distance", &sqdpy<Ray_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Plane_3>);
+
+    m.def("squared_distance", &sqdpy<Segment_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Plane_3>);
+    
+    m.def("squared_distance", &sqdpy<Plane_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Plane_3>);
+    
+
+
     m.def("do_intersect", &do_intersect<Line_3, Line_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Plane_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Ray_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Plane_3, Plane_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Ray_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Sphere_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
+    m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Segment_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Segment_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Sphere_3, Sphere_3>);
+    m.def("do_intersect", &do_intersect<Triangle_3, Triangle_3>);
+
+
+    // intersection, same combinations
+
     m.def("intersection", &intersect<Line_3, Line_3>);
+    m.def("intersection", &intersect<Line_3, Plane_3>);
+    m.def("intersection", &intersect<Line_3, Ray_3>);
+    m.def("intersection", &intersect<Line_3, Segment_3>);
+    m.def("intersection", &intersect<Line_3, Triangle_3>);
+    m.def("intersection", &intersect<Plane_3, Plane_3>);
+    m.def("intersection", &intersect<Plane_3, Ray_3>);
+    m.def("intersection", &intersect<Plane_3, Segment_3>);
+    m.def("intersection", &intersect<Plane_3, Sphere_3>);
+    m.def("intersection", &intersect<Plane_3, Triangle_3>);
+    m.def("intersection", &intersect<Ray_3, Ray_3>);
+    m.def("intersection", &intersect<Ray_3, Segment_3>);
+    m.def("intersection", &intersect<Ray_3, Triangle_3>);
+    m.def("intersection", &intersect<Segment_3, Segment_3>);
+    m.def("intersection", &intersect<Segment_3, Triangle_3>);
+    m.def("intersection", &intersect<Sphere_3, Sphere_3>);
+    m.def("intersection", &intersect<Triangle_3, Triangle_3>);
+
+
+    
+    
+
+
 }
