@@ -363,6 +363,47 @@ void init_skgeom_kernel(py::module &m) {
     //
     // =====================================================================================
 
+
+    py::class_<Aff_transformation_3>(m, "Transformation3")
+ 		.def(py::init<>())
+ 		//.def(py::init<CGAL::Rotation, double, double>())
+ 		//.def(py::init<CGAL::Rotation, Direction_2, double>())
+ 		.def(py::init<CGAL::Translation, Vector_3>())
+ 		.def(py::init<CGAL::Scaling, double>())
+ 		.def(py::init<double, double, double, double, double, double, double, double, double, double, double, double, double>())
+ 		.def(py::init<double, double, double, double, double, double, double, double, double, double>())
+ 		.def(py::self * Aff_transformation_3())
+        
+        .def("transform", static_cast<Point_3 (Aff_transformation_3::*)(const Point_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Vector_3 (Aff_transformation_3::*)(const Vector_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Direction_3 (Aff_transformation_3::*)(const Direction_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Plane_3 (Aff_transformation_3::*)(const Plane_3 &) const>(&Aff_transformation_3::transform))
+
+        .def("__call__", static_cast<Point_3 (Aff_transformation_3::*)(const Point_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Vector_3 (Aff_transformation_3::*)(const Vector_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Direction_3 (Aff_transformation_3::*)(const Direction_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Plane_3 (Aff_transformation_3::*)(const Plane_3 &) const>(&Aff_transformation_3::transform))
+
+        .def("inverse", &Aff_transformation_3::inverse)
+
+        .def("__eq__", &Aff_transformation_3::operator==)
+        .def("__mul__", &Aff_transformation_3::operator*)
+
+        .def("is_even", &Aff_transformation_3::is_even)
+        .def("is_odd", &Aff_transformation_3::is_odd)
+
+      //  .def("transform", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
+      //  .def("transform", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
+      //  .def("transform", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
+      //  .def("transform", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
+//
+      //  .def("__call__", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
+      //  .def("__call__", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
+      //  .def("__call__", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
+      //  .def("__call__", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
+      //   .def("__repr__", &toString<Aff_transformation_3>)
+      ;
+
     py::class_<Point_3>(m, "Point3")
         .def(py::init<>())
         .def(py::init<Point_3>())
