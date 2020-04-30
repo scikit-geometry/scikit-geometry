@@ -49,11 +49,6 @@ bool do_intersect(T1 p, T2 q) {
     .def(+py::self)  \
 
 
-void info()
-{
-    std::cout << "demo";
-}
-
 void init_skgeom_kernel(py::module &m) {
 
     py::class_<Kernel::FT>(m, "FieldNumberType")
@@ -82,7 +77,6 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
         .def(py::init<Kernel::FT, Kernel::FT>())
         .def(py::init<int, int>())
-        .def("info", &info)
         .def("x", &Point_2::x)
         .def("y", &Point_2::y)
         .def("hx", &Point_2::hx)
@@ -687,13 +681,15 @@ void init_skgeom_kernel(py::module &m) {
     m.def("do_intersect", &do_intersect<Plane_3, Sphere_3>);
     m.def("do_intersect", &do_intersect<Plane_3, Triangle_3>);
 
-    // ok till here
-
+    
     m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
-    //m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);
+    //m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);  <-- THIS ONE ERRORS ON OS-X
     m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
 
-    //m.def("do_intersect", &do_intersect<Segment_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Segment_3, Segment_3>);
+    
+    // ok till here
+
     //m.def("do_intersect", &do_intersect<Segment_3, Triangle_3>);
 
     //m.def("do_intersect", &do_intersect<Sphere_3, Sphere_3>);
