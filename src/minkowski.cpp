@@ -27,6 +27,7 @@ void init_minkowski(py::module & m) {
     auto sub = m.def_submodule("minkowski");
     sub.def("minkowski_sum", &get_minkowski<Polygon_2, Polygon_2>);
     sub.def("minkowski_sum", &get_minkowski<Polygon_with_holes_2, Polygon_2>);
+    sub.def("minkowski_sum", &get_minkowski<Polygon_2, Polygon_with_holes_2>);
     sub.def("minkowski_sum", &get_minkowski<Polygon_with_holes_2, Polygon_with_holes_2>);
     sub.def("minkowski_sum", &polyhedron_minkowski_sum_3);
 }
