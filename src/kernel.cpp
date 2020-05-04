@@ -102,7 +102,7 @@ void init_skgeom_kernel(py::module &m) {
     py::class_<Vector_2>(m, "Vector2") 
         .def(py::init<double, double>())
         .def(py::init<int, int>())
-    	.def(py::init<Point_2, Point_2>())
+        .def(py::init<Point_2, Point_2>())
         .def(py::init<Ray_2>())
         .def(py::init<Segment_2>())
         .def(py::init<Line_2>())
@@ -173,7 +173,7 @@ void init_skgeom_kernel(py::module &m) {
     ;
 
     py::class_<Bbox_2>(m, "Bbox2")
-    	.def(py::init<>())
+        .def(py::init<>())
         .def(py::init<double, double, double, double>())
         .def("xmin", &Bbox_2::xmin)
         .def("xmax", &Bbox_2::xmax)
@@ -198,12 +198,12 @@ void init_skgeom_kernel(py::module &m) {
     py::class_<Line_2>(m, "Line2")
         // TODO check if RT != double
         // .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
-    	.def(py::init<double, double, double>())
-    	.def(py::init<Point_2, Point_2>())
-    	.def(py::init<Point_2, Direction_2>())
+        .def(py::init<double, double, double>())
+        .def(py::init<Point_2, Point_2>())
+        .def(py::init<Point_2, Direction_2>())
         .def(py::init<Point_2, Vector_2>())
-    	.def(py::init<Segment_2>())
-    	.def(py::init<Ray_2>())
+        .def(py::init<Segment_2>())
+        .def(py::init<Ray_2>())
 
         .def("a", &Line_2::a)
         .def("b", &Line_2::b)
@@ -325,14 +325,14 @@ void init_skgeom_kernel(py::module &m) {
     ;
 
     py::class_<Transformation_2>(m, "Transformation2")
- 		.def(py::init<>())
- 		.def(py::init<CGAL::Rotation, double, double>())
- 		.def(py::init<CGAL::Rotation, Direction_2, double>())
- 		.def(py::init<CGAL::Translation, Vector_2>())
- 		.def(py::init<CGAL::Scaling, double>())
- 		.def(py::init<double, double, double, double, double, double, double>())
- 		.def(py::init<double, double, double, double, double>())
- 		.def(py::self * Transformation_2())
+        .def(py::init<>())
+        .def(py::init<CGAL::Rotation, double, double>())
+        .def(py::init<CGAL::Rotation, Direction_2, double>())
+        .def(py::init<CGAL::Translation, Vector_2>())
+        .def(py::init<CGAL::Scaling, double>())
+        .def(py::init<double, double, double, double, double, double, double>())
+        .def(py::init<double, double, double, double, double>())
+        .def(py::self * Transformation_2())
         
         .def("transform", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
         .def("transform", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
@@ -344,7 +344,7 @@ void init_skgeom_kernel(py::module &m) {
         .def("__call__", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
         .def("__call__", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
         .def("__repr__", &toString<Transformation_2>)
-	;
+    ;
 
     // =====================================================================================
     //
@@ -359,14 +359,14 @@ void init_skgeom_kernel(py::module &m) {
 
 
     py::class_<Aff_transformation_3>(m, "Transformation3")
- 		.def(py::init<>())
- 		//.def(py::init<CGAL::Rotation, double, double>())
- 		//.def(py::init<CGAL::Rotation, Direction_2, double>())
- 		.def(py::init<CGAL::Translation, Vector_3>())
- 		.def(py::init<CGAL::Scaling, double>())
- 		.def(py::init<double, double, double, double, double, double, double, double, double, double, double, double, double>())
- 		.def(py::init<double, double, double, double, double, double, double, double, double, double>())
- 		.def(py::self * Aff_transformation_3())
+        .def(py::init<>())
+        //.def(py::init<CGAL::Rotation, double, double>())
+        //.def(py::init<CGAL::Rotation, Direction_2, double>())
+        .def(py::init<CGAL::Translation, Vector_3>())
+        .def(py::init<CGAL::Scaling, double>())
+        .def(py::init<double, double, double, double, double, double, double, double, double, double, double, double, double>())
+        .def(py::init<double, double, double, double, double, double, double, double, double, double>())
+        .def(py::self * Aff_transformation_3())
         
         .def("transform", static_cast<Point_3 (Aff_transformation_3::*)(const Point_3 &) const>(&Aff_transformation_3::transform))
         .def("transform", static_cast<Vector_3 (Aff_transformation_3::*)(const Vector_3 &) const>(&Aff_transformation_3::transform))
@@ -427,10 +427,10 @@ void init_skgeom_kernel(py::module &m) {
 
     py::class_<Line_3>(m, "Line3")
         .def(py::init<Point_3, Point_3>())
-    	.def(py::init<Point_3, Direction_3>())
+        .def(py::init<Point_3, Direction_3>())
         .def(py::init<Point_3, Vector_3>())
-    	.def(py::init<Segment_3>())
-    	.def(py::init<Ray_3>())
+        .def(py::init<Segment_3>())
+        .def(py::init<Ray_3>())
 
         //.def("point", (Point_3 (Line_3::*)(const FT))&Line_3::point)  // TODO: why does this not work?
         //.def("point", py::overload_cast<void>(&Line_3::point)         // ??? Should type be FT
