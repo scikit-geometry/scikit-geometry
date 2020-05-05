@@ -102,7 +102,7 @@ void init_skgeom_kernel(py::module &m) {
     py::class_<Vector_2>(m, "Vector2") 
         .def(py::init<double, double>())
         .def(py::init<int, int>())
-    	.def(py::init<Point_2, Point_2>())
+        .def(py::init<Point_2, Point_2>())
         .def(py::init<Ray_2>())
         .def(py::init<Segment_2>())
         .def(py::init<Line_2>())
@@ -173,7 +173,7 @@ void init_skgeom_kernel(py::module &m) {
     ;
 
     py::class_<Bbox_2>(m, "Bbox2")
-    	.def(py::init<>())
+        .def(py::init<>())
         .def(py::init<double, double, double, double>())
         .def("xmin", &Bbox_2::xmin)
         .def("xmax", &Bbox_2::xmax)
@@ -198,12 +198,12 @@ void init_skgeom_kernel(py::module &m) {
     py::class_<Line_2>(m, "Line2")
         // TODO check if RT != double
         // .def(py::init<Kernel::RT, Kernel::RT, Kernel::RT>())
-    	.def(py::init<double, double, double>())
-    	.def(py::init<Point_2, Point_2>())
-    	.def(py::init<Point_2, Direction_2>())
+        .def(py::init<double, double, double>())
+        .def(py::init<Point_2, Point_2>())
+        .def(py::init<Point_2, Direction_2>())
         .def(py::init<Point_2, Vector_2>())
-    	.def(py::init<Segment_2>())
-    	.def(py::init<Ray_2>())
+        .def(py::init<Segment_2>())
+        .def(py::init<Ray_2>())
 
         .def("a", &Line_2::a)
         .def("b", &Line_2::b)
@@ -325,14 +325,14 @@ void init_skgeom_kernel(py::module &m) {
     ;
 
     py::class_<Transformation_2>(m, "Transformation2")
- 		.def(py::init<>())
- 		.def(py::init<CGAL::Rotation, double, double>())
- 		.def(py::init<CGAL::Rotation, Direction_2, double>())
- 		.def(py::init<CGAL::Translation, Vector_2>())
- 		.def(py::init<CGAL::Scaling, double>())
- 		.def(py::init<double, double, double, double, double, double, double>())
- 		.def(py::init<double, double, double, double, double>())
- 		.def(py::self * Transformation_2())
+        .def(py::init<>())
+        .def(py::init<CGAL::Rotation, double, double>())
+        .def(py::init<CGAL::Rotation, Direction_2, double>())
+        .def(py::init<CGAL::Translation, Vector_2>())
+        .def(py::init<CGAL::Scaling, double>())
+        .def(py::init<double, double, double, double, double, double, double>())
+        .def(py::init<double, double, double, double, double>())
+        .def(py::self * Transformation_2())
         
         .def("transform", static_cast<Point_2 (Transformation_2::*)(const Point_2 &) const>(&Transformation_2::transform))
         .def("transform", static_cast<Line_2 (Transformation_2::*)(const Line_2 &) const>(&Transformation_2::transform))
@@ -344,7 +344,53 @@ void init_skgeom_kernel(py::module &m) {
         .def("__call__", static_cast<Direction_2 (Transformation_2::*)(const Direction_2 &) const>(&Transformation_2::transform))
         .def("__call__", static_cast<Vector_2 (Transformation_2::*)(const Vector_2 &) const>(&Transformation_2::transform))
         .def("__repr__", &toString<Transformation_2>)
-	;
+    ;
+
+    // =====================================================================================
+    //
+    //            ____  _____ 
+    //           |___ \|  __ \ 
+    //             __) | |  | |
+    //            |__ <| |  | |
+    //            ___) | |__| |
+    //           |____/|_____/ 
+    //
+    // =====================================================================================
+
+
+    py::class_<Aff_transformation_3>(m, "Transformation3")
+        .def(py::init<>())
+        //.def(py::init<CGAL::Rotation, double, double>())
+        //.def(py::init<CGAL::Rotation, Direction_2, double>())
+        .def(py::init<CGAL::Translation, Vector_3>())
+        .def(py::init<CGAL::Scaling, double>())
+        .def(py::init<double, double, double, double, double, double, double, double, double, double, double, double, double>())
+        .def(py::init<double, double, double, double, double, double, double, double, double, double>())
+        .def(py::self * Aff_transformation_3())
+        
+        .def("transform", static_cast<Point_3 (Aff_transformation_3::*)(const Point_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Vector_3 (Aff_transformation_3::*)(const Vector_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Direction_3 (Aff_transformation_3::*)(const Direction_3 &) const>(&Aff_transformation_3::transform))
+        .def("transform", static_cast<Plane_3 (Aff_transformation_3::*)(const Plane_3 &) const>(&Aff_transformation_3::transform))
+
+        .def("__call__", static_cast<Point_3 (Aff_transformation_3::*)(const Point_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Vector_3 (Aff_transformation_3::*)(const Vector_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Direction_3 (Aff_transformation_3::*)(const Direction_3 &) const>(&Aff_transformation_3::transform))
+        .def("__call__", static_cast<Plane_3 (Aff_transformation_3::*)(const Plane_3 &) const>(&Aff_transformation_3::transform))
+
+        .def("inverse", &Aff_transformation_3::inverse)
+
+        .def("__eq__", &Aff_transformation_3::operator==)
+        .def("__mul__", &Aff_transformation_3::operator*)
+
+        .def("is_even", &Aff_transformation_3::is_even)
+        .def("is_odd", &Aff_transformation_3::is_odd)
+
+        .def("cartesian", &Aff_transformation_3::cartesian)
+        .def("m", &Aff_transformation_3::m)
+        .def("homogeneous", &Aff_transformation_3::homogeneous)
+        .def("hm", &Aff_transformation_3::hm)
+     ;
 
     py::class_<Point_3>(m, "Point3")
         .def(py::init<>())
@@ -373,9 +419,37 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self <= Point_3())
         .def(py::self >= Point_3())
         .def(py::self + Vector_3())
+        //.def(py::self + Point_3())
         .def(py::self - Point_3())
         .def(py::self - Vector_3())
         .def(py::self - CGAL::Origin())
+    ;
+
+    py::class_<Line_3>(m, "Line3")
+        .def(py::init<Point_3, Point_3>())
+        .def(py::init<Point_3, Direction_3>())
+        .def(py::init<Point_3, Vector_3>())
+        .def(py::init<Segment_3>())
+        .def(py::init<Ray_3>())
+
+        //.def("point", (Point_3 (Line_3::*)(const FT))&Line_3::point)  // TODO: why does this not work?
+        //.def("point", py::overload_cast<void>(&Line_3::point)         // ??? Should type be FT
+        .def("projection", &Line_3::projection)
+
+        .def("is_degenerate", &Line_3::is_degenerate)
+
+        .def("has_on", &Line_3::has_on)
+
+        .def("perpendicular_plane", &Line_3::perpendicular_plane)
+        .def("opposite", &Line_3::opposite)
+        .def("to_vector", &Line_3::to_vector)
+        .def("direction", &Line_3::direction)
+        .def("transform", &Line_3::transform)
+
+        .def(py::self == Line_3())
+        .def(py::self != Line_3())
+
+        .def("__repr__", &toString<Line_3>)
     ;
 
     py::class_<Plane_3>(m, "Plane3")
@@ -518,23 +592,124 @@ void init_skgeom_kernel(py::module &m) {
         .def(py::self != Triangle_3())
     ;
 
-    // TODO add all combinations
+    // 2D
+
     m.def("squared_distance", &sqdpy<Point_2, Point_2>);
-    m.def("squared_distance", &sqdpy<Line_2, Line_2>);
-    m.def("squared_distance", &sqdpy<Segment_2, Segment_2>);
-    m.def("squared_distance", &sqdpy<Ray_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Point_2, Triangle_2>);
+
     m.def("squared_distance", &sqdpy<Line_2, Point_2>);
-    m.def("squared_distance", &sqdpy<Segment_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Ray_2>);
     m.def("squared_distance", &sqdpy<Line_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Line_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Ray_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Ray_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Segment_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Segment_2, Triangle_2>);
+
+    m.def("squared_distance", &sqdpy<Triangle_2, Point_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Line_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Ray_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Segment_2>);
+    m.def("squared_distance", &sqdpy<Triangle_2, Triangle_2>);
 
     m.def("do_intersect", &do_intersect<Line_2, Line_2>);
     m.def("do_intersect", &do_intersect<Line_2, Segment_2>);
     m.def("do_intersect", &do_intersect<Segment_2, Segment_2>);
     m.def("do_intersect", &do_intersect<Ray_2, Line_2>);
     m.def("do_intersect", &do_intersect<Ray_2, Segment_2>);
-
+    
     m.def("intersection", &intersect<Line_2, Line_2>);
     m.def("intersection", &intersect<Line_2, Segment_2>);
     m.def("intersection", &intersect<Segment_2, Segment_2>);
     m.def("intersection", &intersect<Ray_2, Segment_2>);
+
+    // 3D
+
+    m.def("squared_distance", &sqdpy<Line_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Line_3, Plane_3>);
+
+    m.def("squared_distance", &sqdpy<Point_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Point_3, Plane_3>);
+    
+    m.def("squared_distance", &sqdpy<Ray_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Ray_3, Plane_3>);
+
+    m.def("squared_distance", &sqdpy<Segment_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Segment_3, Plane_3>);
+    
+    m.def("squared_distance", &sqdpy<Plane_3, Line_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Point_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Ray_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Segment_3>);
+    m.def("squared_distance", &sqdpy<Plane_3, Plane_3>);
+    
+
+
+    m.def("do_intersect", &do_intersect<Line_3, Line_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Plane_3>);
+    m.def("do_intersect", &do_intersect<Line_3, Ray_3>);
+    //m.def("do_intersect", &do_intersect<Line_3, Segment_3>); <-- THIS ONE ERRORS ON OS-X, windows (VS) & linux work fine
+    m.def("do_intersect", &do_intersect<Line_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Plane_3, Plane_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Ray_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Segment_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Sphere_3>);
+    m.def("do_intersect", &do_intersect<Plane_3, Triangle_3>);
+
+    
+    m.def("do_intersect", &do_intersect<Ray_3, Ray_3>);
+    //m.def("do_intersect", &do_intersect<Ray_3, Segment_3>);  <-- THIS ONE ERRORS ON OS-X, windows (VS) & linux work fine
+    m.def("do_intersect", &do_intersect<Ray_3, Triangle_3>);
+
+    m.def("do_intersect", &do_intersect<Segment_3, Segment_3>);
+    
+    m.def("do_intersect", &do_intersect<Segment_3, Triangle_3>);
+    m.def("do_intersect", &do_intersect<Sphere_3, Sphere_3>);
+    m.def("do_intersect", &do_intersect<Triangle_3, Triangle_3>);
+
+
+    // intersection, same combinations
+
+    m.def("intersection", &intersect<Line_3, Line_3>);
+    m.def("intersection", &intersect<Line_3, Plane_3>);
+    m.def("intersection", &intersect<Line_3, Ray_3>);
+    m.def("intersection", &intersect<Line_3, Segment_3>);
+    m.def("intersection", &intersect<Line_3, Triangle_3>);
+    m.def("intersection", &intersect<Plane_3, Plane_3>);
+    m.def("intersection", &intersect<Plane_3, Ray_3>);
+    m.def("intersection", &intersect<Plane_3, Segment_3>);
+    m.def("intersection", &intersect<Plane_3, Sphere_3>);
+    m.def("intersection", &intersect<Plane_3, Triangle_3>);
+    m.def("intersection", &intersect<Ray_3, Ray_3>);
+    m.def("intersection", &intersect<Ray_3, Segment_3>);
+    m.def("intersection", &intersect<Ray_3, Triangle_3>);
+    m.def("intersection", &intersect<Segment_3, Segment_3>);
+    m.def("intersection", &intersect<Segment_3, Triangle_3>);
+    m.def("intersection", &intersect<Sphere_3, Sphere_3>);
+    m.def("intersection", &intersect<Triangle_3, Triangle_3>);
 }

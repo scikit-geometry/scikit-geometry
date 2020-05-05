@@ -33,6 +33,10 @@ if not conda_prefix:
 
 if conda_prefix:
     cgal_include = os.path.join(conda_prefix, 'include', 'CGAL')
+
+    if not os.path.exists(cgal_include):
+        cgal_include = os.path.join(conda_prefix, 'Library', 'include', 'CGAL')
+        include_dirs.append(os.path.join(conda_prefix, 'Library', 'include'))
 else:
     cgal_include = '/usr/local/include/CGAL/'
 
