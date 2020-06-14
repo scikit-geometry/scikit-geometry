@@ -1,6 +1,7 @@
 # scikit-geometry
 
 ![scikit-geometry logo](docs/source/_static/scikit-geometry.svg)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scikit-geometry/scikit-geometry/master?filepath=notebooks)
 
 *A Python Geometric Algorithms Library*
 
