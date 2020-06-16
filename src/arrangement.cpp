@@ -27,6 +27,12 @@ typedef CGAL::Cartesian_converter<Kernel,Rat_kernel>    Kernel_to_Rational;
 
 typedef PySequenceCirculator<Ccb_halfedge_circulator> PyCcbHalfedgeCirculator;
 
+void insert_segments_in_arr(Segment_Arrangement_2& arr, std::vector<Segment_2>& segs) {
+    CGAL::insert(arr, segs.begin(), segs.end());
+}
+void insert_segment_in_arr(Segment_Arrangement_2& self, Segment_2& segment) {
+            CGAL::insert(self, segment);
+}
 
 Halfedge_handle insert_non_intersecting_curve_in_arr(Segment_Arrangement_2& arr, Segment_2& seg) {
     return CGAL::insert_non_intersecting_curve(arr, seg);
@@ -176,9 +182,8 @@ void init_arrangement(py::module &m) {
         }, py::keep_alive<0, 1>())
         .def("insert_non_intersecting_curve", &insert_non_intersecting_curve_in_arr)
         .def("insert_non_intersecting_curves", &insert_non_intersecting_curves_in_arr)
-        .def("insert", [](Segment_Arrangement_2& self, Segment_2& segment) {
-            CGAL::insert(self, segment);
-        })
+        .def("insert", py::overload_cast<Segment_Arrangement_2&, Segment_2&>(&insert_segment_in_arr))
+        .def("insert", py::overload_cast<Segment_Arrangement_2&, std::vector<Segment_2>&>(&insert_segments_in_arr))
         .def("unbounded_face", static_cast<Face_handle (Segment_Arrangement_2::*)()>(&Segment_Arrangement_2::unbounded_face))
         // .def("insert_from_left_vertex", &Segment_Arrangement_2::insert_from_left_vertex)
         // .def("insert_from_right_vertex", &Segment_Arrangement_2::insert_from_right_vertex)
