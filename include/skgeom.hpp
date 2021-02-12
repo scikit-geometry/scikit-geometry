@@ -1,5 +1,5 @@
 #pragma once
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
@@ -20,7 +20,7 @@
 
 namespace py = pybind11;
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 
 typedef Kernel::FT                                          SKGEOM_FT;
 typedef Kernel::RT                                          SKGEOM_RT;
