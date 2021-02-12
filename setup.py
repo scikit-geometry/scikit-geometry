@@ -43,7 +43,7 @@ else:
 cgal_version = None
 if os.path.exists(os.path.join(cgal_include, 'version.h')):
     with open(os.path.join(cgal_include, 'version.h'), 'r') as f:
-        m = re.search(r'#define\s+CGAL_VERSION\s+(.+)', f.read())
+        m = re.search(r'#define\s+CGAL_VERSION\s+([\d\.]+)', f.read())
         if m:
             cgal_version = tuple(map(int, m.group(1).split('.')))
 
