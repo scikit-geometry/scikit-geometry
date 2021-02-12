@@ -1,4 +1,5 @@
 #pragma once
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_2.h>
@@ -10,6 +11,7 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/connect_holes.h>
 #include <CGAL/centroid.h>
+#include <CGAL/version.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
@@ -20,7 +22,11 @@
 
 namespace py = pybind11;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+#if ((CGAL_VERSION_MAJOR >= 5) && (CGAL_VERSION_MINOR >= 2)) || (CGAL_VERSION_MAJOR > 5)
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+#else
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
+#endif
 
 typedef Kernel::FT                                          SKGEOM_FT;
 typedef Kernel::RT                                          SKGEOM_RT;
