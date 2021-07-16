@@ -28,10 +28,20 @@ typedef CGAL::Cartesian_converter<Kernel,Rat_kernel>    Kernel_to_Rational;
 typedef PySequenceCirculator<Ccb_halfedge_circulator> PyCcbHalfedgeCirculator;
 
 void insert_segments_in_arr(Segment_Arrangement_2& arr, std::vector<Segment_2>& segs) {
+	try{
     CGAL::insert(arr, segs.begin(), segs.end());
+	} catch (CGAL::Precondition_exception)
+	{
+		std::cout << "CGAL precondition violation in insert segment\n";
+	}
 }
 void insert_segment_in_arr(Segment_Arrangement_2& self, Segment_2& segment) {
+	try{
     CGAL::insert(self, segment);
+	} catch (CGAL::Precondition_exception)
+	{
+		std::cout << "CGAL precondition violation in insert segments\n";
+	}
 }
 
 Halfedge_handle insert_non_intersecting_curve_in_arr(Segment_Arrangement_2& arr, Segment_2& seg) {
