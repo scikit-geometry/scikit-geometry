@@ -1,5 +1,4 @@
 #include "skgeom.hpp"
-
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_2.h>
@@ -89,10 +88,11 @@ void init_skeleton(py::module & m) {
         })
 		.def("offset_polygons", [](const Skeleton_2_Ref &s, double offset) -> py::list {
 			py::list r;
-			auto result = CGAL::create_offset_polygons_2<Polygon_2>(offset, *s);
-			for (const auto &polygon : result) {
-				r.append(py::cast(new Polygon_2(*polygon), pybind11::return_value_policy::automatic));
-			}
+			// Commented, probably requires some form of conversion to work
+			// auto result = CGAL::create_offset_polygons_2<Polygon_2>(offset, *s);
+			// for (const auto &polygon : result) {
+			// 	r.append(py::cast(new Polygon_2(*polygon), pybind11::return_value_policy::automatic));
+			// }
 			return r;
 		});
 
@@ -131,7 +131,7 @@ void init_skeleton(py::module & m) {
 
 	sub.def("create_interior_straight_skeleton", [](
 		const Polygon_with_holes_2 &polygon) -> Skeleton_2_Ref {
-		return to_std(CGAL::create_interior_straight_skeleton_2(polygon));
+		return to_std(CGAL::create_interior_straight_skeleton_2(polygon, Kernel()));
 	});
 
 	sub.def("create_exterior_straight_skeleton", [](
