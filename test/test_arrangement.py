@@ -1,126 +1,137 @@
-import unittest
+import pytest
 
-from skgeom import *
-from skgeom.utils import *
+import skgeom as sg
 
-import IPython
-
-class ArrangementTests(unittest.TestCase):
-    def setUp(self):
-
-        self.segments = [
-            Segment2(Point2(0, 0), Point2(0, 4)),
-            Segment2(Point2(0, 4), Point2(4, 4)),
-            Segment2(Point2(4, 4), Point2(4, 0)),
-            Segment2(Point2(4, 0), Point2(0, 0)),
-        ]
-        self.hole_s = [
-            Segment2(Point2(2, 2), Point2(2, 3)),
-            Segment2(Point2(2, 3), Point2(3, 3)),
-            Segment2(Point2(3, 3), Point2(3, 2)),
-            Segment2(Point2(3, 2), Point2(2, 2)),
+# TODO: missing some insert tests, unbounded_face, address for Arrangement class
+# TODO: missing incident_halfedges for Vertex
+# TODO: missing twin, face for Halfedge
+# TODO: missing has_outer_ccb, outer_ccb, isolated_vertices for Face
+# TODO: Add error tests as well
+class TestArrangement:
+    @pytest.fixture
+    def outer_points(self):
+        return [
+            sg.Point2(0, 0),
+            sg.Point2(0, 4),
+            sg.Point2(4, 4),
+            sg.Point2(4, 0),
         ]
 
-    def test_arrangement(self):
-        self.arr = arrangement.Arrangement()
-        print(self.arr.insert_non_intersecting_curves(self.segments))
-        p = self.arr.find(Point2(0, 0))
-        self.assertEqual(type(p), arrangement.Vertex)
-        self.assertEqual(p.point(), Point2(0, 0))
-        h = self.arr.find(Point2(0, 2))
-        self.assertEqual(type(h), arrangement.Halfedge)
-        print(h.curve())
-        self.assertEqual(h.curve(), Segment2(Point2(0, 0), Point2(0, 4)))
+    @pytest.fixture
+    def hole_points(self):
+        return [
+            sg.Point2(2, 2),
+            sg.Point2(2, 3),
+            sg.Point2(3, 3),
+            sg.Point2(3, 2),
+        ]
 
-        print(self.arr.vertices)
-        for v in self.arr.vertices:
-            print(v)
-            print(v.point())
+    @pytest.fixture
+    def outer_segments(self, outer_points):
+        return [
+            sg.Segment2(outer_points[0], outer_points[1]),
+            sg.Segment2(outer_points[1], outer_points[2]),
+            sg.Segment2(outer_points[2], outer_points[3]),
+            sg.Segment2(outer_points[3], outer_points[0]),
+        ]
 
-        print(self.arr.insert_non_intersecting_curves(list(reversed(self.hole_s))))
-        f = self.arr.find(Point2(1.5, 1.5))
-        self.assertEqual(type(f), arrangement.Face)
+    @pytest.fixture
+    def hole_segments(self, hole_points):
+        return [
+            sg.Segment2(hole_points[0], hole_points[1]),
+            sg.Segment2(hole_points[1], hole_points[2]),
+            sg.Segment2(hole_points[2], hole_points[3]),
+            sg.Segment2(hole_points[3], hole_points[0]),
+        ]
 
-        print(f.holes.__next__())
+    @pytest.fixture
+    def arr(self, outer_segments):
+        arr = sg.arrangement.Arrangement()
+        arr.insert_non_intersecting_curves(outer_segments)
+        return arr
+
+    # Test initialization by checking vertices, halfedges, faces
+    def test_init(self, arr, outer_points, outer_segments):
+        assert len(list(arr.vertices)) == len(outer_points)
+        for v in arr.vertices:
+            assert v.point() in outer_points
+
+        for h in arr.halfedges:
+            assert h.curve() in outer_segments
+
+        assert len(list(arr.faces)) == 2
+
+    #  Test find methods
+    def test_find(self, arr, outer_points):
+        p = arr.find(outer_points[0])
+        assert type(p) is sg.arrangement.Vertex
+        assert p.point() == outer_points[0]
+        h = arr.find(sg.Point2(0, 2))
+        assert type(h) is sg.arrangement.Halfedge
+
+        # Test point in unbounded face
+        f = arr.find(sg.Point2(-10, -10))
+        assert type(f) is sg.arrangement.Face
+        assert f.is_unbounded
+
+    # Test halfedge methods
+    def test_halfedge(self, arr, outer_segments, outer_points):
+        h = arr.find(sg.Point2(0, 2))
+        assert h.curve() == outer_segments[0]
+        assert h.prev().curve() == outer_segments[1]
+        assert h.next().curve() == outer_segments[3]
+        assert h.source().point() == outer_points[1]
+        assert h.target().point() == outer_points[0]
+
+    # Test face methods
+    def test_faces(self, arr):
+        num_bounded = 0
+        num_unbounded = 0
+        for f in arr.faces:
+            assert f.number_of_isolated_vertices == 0
+            num_bounded += not f.is_unbounded
+            num_unbounded += f.is_unbounded
+        assert num_unbounded == 1
+        assert num_bounded == 1
+
+    # Test inserting square hole into outer square
+    def test_holes(self, arr, hole_segments):
+        arr.insert_non_intersecting_curves(list(reversed(hole_segments)))
+        f = arr.find(sg.Point2(1.5, 1.5))
+        assert type(f) == sg.arrangement.Face
+        assert not f.is_unbounded
+        assert f.number_of_holes == 1
+        assert f.number_of_isolated_vertices == 0
+
+        # Iterate over holes and test hole segments circulator
         for hole in f.holes:
             first = next(hole)
-            print("Hole: ", first.curve())
+            assert first.curve() in hole_segments
             v = next(hole)
             while v != first:
-                print(v.curve())
+                assert v.curve() in hole_segments
                 v = next(hole)
 
-        self.assertFalse(f.is_unbounded())
-        self.assertEqual(f.number_of_holes(), 1)
-        self.assertEqual(f.number_of_isolated_vertices(), 0)
-        self.assertEqual(h.curve(), Segment2(Point2(0, 0), Point2(0, 4)))
+    def test_remove(self, arr, outer_points):
+        # should not remove a point which is a corner
+        assert not arr.remove_vertex(arr.find(outer_points[0]))
 
-        f = self.arr.find(Point2(-10, -10))
-        self.assertEqual(type(f), arrangement.Face)
-        self.assertTrue(f.is_unbounded())
+        # does remove lonely point when inserted
+        lone_pt = sg.Point2(12, 12)
+        arr.insert_point(lone_pt)
+        assert arr.remove_vertex(arr.find(lone_pt))
 
-        t = self.arr.find(Point2(0, 0))
-        print(t.point())
+        # Remove halfedge
+        h = arr.find(sg.Point2(0, 2))
+        f = arr.remove_edge(h)
+        assert type(f) is sg.arrangement.Face
+        assert f.is_unbounded
 
-        # does not remvoe a point which is a corner
-        self.assertFalse(self.arr.remove_vertex(self.arr.find(Point2(0, 0))))
+    def test_errors(self, arr, outer_segments):
+        # Can't insert multiple of same segments
+        with pytest.raises(RuntimeError):
+            arr.insert_non_intersecting_curves(outer_segments)
 
-        # does remove lonely point
-        self.arr.insert_point(Point2(12, 12))
-        self.assertTrue(self.arr.remove_vertex(self.arr.find(Point2(12, 12))))
-
-    def test_visibility(self):
-        outer = [Segment2(Point2(-100, -100), Point2(-100, 100)),
-                 Segment2(Point2(-100, 100), Point2(100, 100)),
-                 Segment2(Point2(100, 100), Point2(100, -100)),
-                 Segment2(Point2(100, -100), Point2(-100, -100))]
-
-        segments = [
-            Segment2(Point2(0, 0), Point2(0, 4)),
-            Segment2(Point2(2, 4), Point2(10, 4)),
-            Segment2(Point2(3, 4), Point2(-8, 0)),
-            Segment2(Point2(1, 0), Point2(0, 5)),
-        ]
-        arr = arrangement.Arrangement()
-        for s in outer:
-            arr.insert(s)
-        for s in segments:
-            arr.insert(s)
-        
-        # segs = segments_from_points((0, 4), (0,0), (3,2), (4,0), (4, 4), (1, 2))
-        # arr.insert_non_intersecting_curves(segs)
-        # q = Point2(0.5, 2)
-        # face = arr.find(q)
-
-        arr.address()
-        vs = RotationalSweepVisibility(arr)
-        # vx = vs.compute_visibility(q, face)
-
-        q = Point2(0.1, 4.1)
-        face = arr.find(q)
-
-        # we need to find the halfedge which has query_point == target
-        for he in arr.halfedges:
-            print(he.curve())
-        for he in arr.vertices:
-            print(he.point())
-
-        he = arr.halfedges
-        edge = next(he)
-
-        vx = vs.compute_visibility(edge.target().point(), edge)
-
-        from matplotlib import pyplot as plt
-        for he in arr.halfedges:
-            plt.plot([he.curve().source().x(), he.curve().target().x()],
-                     [he.curve().source().y(), he.curve().target().y()])
-
-        for he in vx.halfedges:
-            plt.plot([he.curve().source().x(), he.curve().target().x()],
-                     [he.curve().source().y(), he.curve().target().y()], 'k:')
-        plt.scatter(q.x(), q.y())
-        plt.show()
-
-
-if __name__ == '__main__':
-    unittest.main()
+        # Can't remove point that is not in arrangement
+        with pytest.raises(TypeError):
+            arr.remove_vertex(arr.find(sg.Point2(12, 12)))

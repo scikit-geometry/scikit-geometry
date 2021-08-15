@@ -220,10 +220,10 @@ void init_arrangement(py::module &m) {
     ;
 
     py::class_<Face, Face_handle>(sub, "Face")
-        .def("is_unbounded", [](Face & f) -> bool { return f.is_unbounded(); })
-        .def("has_outer_ccb", &Face::has_outer_ccb)
-        .def("number_of_holes", &Face::number_of_holes)
-        .def("number_of_isolated_vertices", [](Face & f) -> int { return f.number_of_isolated_vertices(); })
+        .def_property_readonly("is_unbounded", [](Face & f) -> bool { return f.is_unbounded(); })
+        .def_property_readonly("has_outer_ccb", &Face::has_outer_ccb)
+        .def_property_readonly("number_of_holes", &Face::number_of_holes)
+        .def_property_readonly("number_of_isolated_vertices", [](Face & f) -> int { return f.number_of_isolated_vertices(); })
         .def_property_readonly("isolated_vertices", [](Face& self) {
             return py::make_iterator(self.isolated_vertices_begin(), self.isolated_vertices_end()); 
         }, py::keep_alive<0, 1>())
