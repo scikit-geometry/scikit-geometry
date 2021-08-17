@@ -23,10 +23,10 @@
 // doc of Polyhedron_3 class
 //=======================================================
 const char* Polyhedron_3_doc = "\
-	A polyhedral surface Polyhedron_3 consists of vertices V, edges E,\n\
+	A polyhedral surface Polyhedron3 consists of vertices V, edges E,\n\
 	facets F and an incidence relation on them.\n\
 	Creation:\n\
-	P = Polyhedron_3()\n\
+	P = Polyhedron3()\n\
 	the C++ documentation contains the wide explication of this class:\n\
 	http://www.cgal.org/Manual/3.2/doc_html/cgal_manual/Polyhedron_ref/Class_Polyhedron_3.html";
 

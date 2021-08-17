@@ -57,7 +57,7 @@ void init_polyhedron(py::module &m) {
         .def("set_halfedge", &PolyhedronFacet::set_halfedge)
     ;
 
-    py::class_<Polyhedron_3>(m, "Polyhedron_3", Polyhedron_3_doc)
+    py::class_<Polyhedron_3>(m, "Polyhedron3", Polyhedron_3_doc)
         .def(py::init<>())
         .def(py::init<Polyhedron_3>())
         // .def(init<size_t, size_t, size_t, optional<const kernel&>>())
