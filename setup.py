@@ -123,7 +123,8 @@ ext_modules = [
             'src/voronoi_delaunay.cpp',
             'src/optimal_transport.cpp',
             'src/skeleton.cpp',
-            'src/inscribed.cpp'
+            'src/inscribed.cpp',
+            'src/mesh.cpp',
         ],
         include_dirs=include_dirs,
         library_dirs=library_dirs,

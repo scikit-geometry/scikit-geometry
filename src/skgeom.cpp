@@ -29,6 +29,7 @@ void init_polygon_offset(py::module&);
 void init_skeleton(py::module&);
 void init_simplification(py::module&);
 void init_inscribed(py::module&);
+void init_mesh(py::module&);
 
 
 PYBIND11_MODULE(_skgeom, m) {
@@ -52,4 +53,5 @@ PYBIND11_MODULE(_skgeom, m) {
     init_skeleton(m);
     init_simplification(m);
     init_inscribed(m);
+    init_mesh(m);
 }
