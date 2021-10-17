@@ -18,10 +18,11 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 include_dirs = [
+    "./include/",
+    "./src/docs/",
     # Path to pybind11 headers
-    './include/',
     get_pybind_include(),
-    get_pybind_include(user=True)
+    get_pybind_include(user=True),
 ]
 
 library_dirs = None
@@ -37,6 +38,8 @@ if conda_prefix:
     if not os.path.exists(cgal_include):
         cgal_include = os.path.join(conda_prefix, 'Library', 'include', 'CGAL')
         include_dirs.append(os.path.join(conda_prefix, 'Library', 'include'))
+elif os.path.exists('/usr/include/CGAL/'):
+    cgal_include = '/usr/include/CGAL/'
 else:
     cgal_include = '/usr/local/include/CGAL/'
 
@@ -74,7 +77,7 @@ if conda_prefix:
         library_dir = os.path.join(prefix, 'lib')
 
         if cgal_version < (5, 0):
-            # currently we also need to add the apparently windows specific suffix here, it's unclear if this is 
+            # currently we also need to add the apparently windows specific suffix here, it's unclear if this is
             # necessary if CGAL is installed not from CONDA.
             # suffix = "-vc140-mt-4.14.1"
             adjusted_cgal_libs = []
