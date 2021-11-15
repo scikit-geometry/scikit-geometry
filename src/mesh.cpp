@@ -32,6 +32,24 @@ void add_vertex_property(Mesh& mesh, std::string name, const py::array_t<double>
 }
 
 
+void add_face_property(Mesh& mesh, std::string name, const py::array_t<double>& vals) {
+    Mesh::Property_map<F, double> prop_map;
+    bool created;
+    std::tie(prop_map, created) = mesh.add_property_map<F, double>(name, 0.0);
+    if (!created) {
+        throw std::runtime_error("failed to construct property map for " + name);
+    }
+
+    auto vals_r = vals.unchecked<1>();
+    size_t i = 0;
+
+    for (F f : mesh.faces()) {
+        prop_map[f] = vals_r(i);
+        i++;
+    }
+}
+
+
 void build_mesh(Mesh& mesh, const py::array_t<double>& verts, const py::array_t<int>& faces) {
     // Add vertices
     auto v_r = verts.unchecked<2>();
@@ -116,6 +134,26 @@ py::array_t<double> vertex_property(const Mesh& mesh, const std::string& name) {
     return vdata;
 }
 
+py::array_t<double> face_property(const Mesh& mesh, const std::string& name) {
+    Mesh::Property_map<F, double> pmap;
+    bool found;
+    std:tie(pmap, found) = mesh.property_map<F, double>(name);
+    if (!found) {
+        throw std::runtime_error("Unrecognized vertex property " + name);
+    }
+
+    ssize_t nf = mesh.number_of_faces();
+    py::array_t<double, py::array::c_style> fdata({nf});
+    auto r = fdata.mutable_unchecked<1>();
+
+    size_t i = 0;
+    for (F f : mesh.faces()) {
+        r(i) = pmap[f];
+        i++;
+    }
+    return fdata;
+}
+
 
 void init_mesh(py::module &m) {
     py::class_<Mesh>(m, "Mesh")
@@ -128,10 +166,15 @@ void init_mesh(py::module &m) {
         .def("vertices", &vertices)
         .def("faces", &faces)
         .def("add_vertex_property", &add_vertex_property)
+        .def("add_face_property", &add_face_property)
         .def("vertex_properties", [](const Mesh& mesh) {
             return mesh.properties<V>();
         })
+        .def("face_properties", [](const Mesh& mesh) {
+            return mesh.properties<F>();
+        })
         .def("vertex_property", &vertex_property)
+        .def("face_property", &face_property)
     ;
 
     m.def("corefine", [](Mesh& mesh1, Mesh& mesh2){
