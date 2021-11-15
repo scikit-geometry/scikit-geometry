@@ -17,7 +17,7 @@ typedef std::map<std::string, py::array_t<double>&>                 NamedProps;
 void add_vertex_property(Mesh& mesh, std::string name, const py::array_t<double>& vals) {
     Mesh::Property_map<V, double> prop_map;
     bool created;
-    std::tie(prop_map, created) = mesh.add_property_map<V, double>("v:" + name, 0.0);
+    std::tie(prop_map, created) = mesh.add_property_map<V, double>(name, 0.0);
     if (!created) {
         throw std::runtime_error("failed to construct property map for " + name);
     }
@@ -99,7 +99,7 @@ py::array_t<int> faces(const Mesh& mesh) {
 py::array_t<double> vertex_property(const Mesh& mesh, const std::string& name) {
     Mesh::Property_map<V, double> pmap;
     bool found;
-    std:tie(pmap, found) = mesh.property_map<V, double>("v:" + name);
+    std:tie(pmap, found) = mesh.property_map<V, double>(name);
     if (!found) {
         throw std::runtime_error("Unrecognized vertex property " + name);
     }
