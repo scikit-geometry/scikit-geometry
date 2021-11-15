@@ -178,6 +178,21 @@ void init_mesh(py::module &m) {
         .def("corefine", [](Mesh& mesh1, Mesh& mesh2){
             CGAL::Polygon_mesh_processing::corefine(mesh1, mesh2);
         })
+        .def("difference", [](Mesh& mesh1, Mesh& mesh2) {
+            Mesh *result = new Mesh;
+            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(mesh1, mesh2, *result);
+            return result;
+        })
+        .def("union", [](Mesh& mesh1, Mesh& mesh2) {
+            Mesh *result = new Mesh;
+            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_union(mesh1, mesh2, *result);
+            return result;
+        })
+        .def("intersection", [](Mesh& mesh1, Mesh& mesh2) {
+            Mesh *result = new Mesh;
+            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_union(mesh1, mesh2, *result);
+            return result;
+        })
     ;
 
 }
