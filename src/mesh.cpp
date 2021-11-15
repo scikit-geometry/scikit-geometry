@@ -175,9 +175,9 @@ void init_mesh(py::module &m) {
         })
         .def("vertex_property", &vertex_property)
         .def("face_property", &face_property)
+        .def("corefine", [](Mesh& mesh1, Mesh& mesh2){
+            CGAL::Polygon_mesh_processing::corefine(mesh1, mesh2);
+        })
     ;
 
-    m.def("corefine", [](Mesh& mesh1, Mesh& mesh2){
-        return CGAL::Polygon_mesh_processing::corefine(mesh1, mesh2);
-    });
 }
