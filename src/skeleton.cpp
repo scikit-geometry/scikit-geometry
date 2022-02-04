@@ -13,7 +13,7 @@ typedef Skeleton_2::Face_const_iterator FaceConstIterator;
 
 typedef CGAL::HalfedgeDS_in_place_list_vertex<Skeleton_2::Vertex> Skeleton_2_Vertex;
 typedef CGAL::HalfedgeDS_in_place_list_halfedge<Skeleton_2::Halfedge> Skeleton_2_Halfedge;
-typedef CGAL::HalfedgeDS_in_place_list_halfedge<Skeleton_2::Face> Skeleton_2_Face;
+typedef CGAL::HalfedgeDS_in_place_list_face<Skeleton_2::Face> Skeleton_2_Face;
 
 template<typename T>
 std::shared_ptr<T> to_std(boost::shared_ptr<T> ptr) {
