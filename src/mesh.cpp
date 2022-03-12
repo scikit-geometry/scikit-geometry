@@ -15,85 +15,72 @@ typedef Mesh::Face_index                                            F;
 typedef std::map<std::string, py::array_t<double>&>                 NamedProps;
 
 
-void add_vertex_property(Mesh& mesh, std::string name, const py::array_t<double>& vals) {
-    Mesh::Property_map<V, double> prop_map;
+template <typename Key, typename Val>
+Mesh::Property_map<Key, Val> add_property_map (Mesh& mesh, std::string name, const Val default_val) {
+    Mesh::Property_map<Key, Val> pmap;
     bool created;
-    std::tie(prop_map, created) = mesh.add_property_map<V, double>(name, 0.0);
+    std::tie(pmap, created) = mesh.add_property_map<Key, Val>(name, default_val);
     if (!created) {
-        throw std::runtime_error("failed to construct property map for " + name);
+        throw std::runtime_error("Property map already exists");
     }
-
-    auto vals_r = vals.unchecked<1>();
-    size_t i = 0;
-
-    for (V v : mesh.vertices()) {
-        prop_map[v] = vals_r(i);
-        i++;
-    }
+    return pmap;
 }
 
-
-void add_face_property(Mesh& mesh, std::string name, const py::array_t<double>& vals) {
-    Mesh::Property_map<F, double> prop_map;
-    bool created;
-    std::tie(prop_map, created) = mesh.add_property_map<F, double>(name, 0.0);
-    if (!created) {
-        throw std::runtime_error("failed to construct property map for " + name);
-    }
-
-    auto vals_r = vals.unchecked<1>();
-    size_t i = 0;
-
-    for (F f : mesh.faces()) {
-        prop_map[f] = vals_r(i);
-        i++;
-    }
+template <typename Key, typename Val>
+Val get_property_value(const Mesh::Property_map<Key, Val>& pmap, const Key& key) {
+    return pmap[key];
 }
 
-py::array_t<double> vertex_property(const Mesh& mesh, const std::string& name) {
-    Mesh::Property_map<V, double> pmap;
-    bool found;
-    std:tie(pmap, found) = mesh.property_map<V, double>(name);
-    if (!found) {
-        throw std::runtime_error("Unrecognized vertex property " + name);
-    }
+template <typename Key, typename Val>
+py::array_t<Val> get_property_values(const Mesh::Property_map<Key, Val>& pmap, const std::vector<Key>& keys) {
+    size_t nk = keys.size();
+    py::array_t<Val, py::array::c_style> vals({int(nk)});
+    auto r = vals.mutable_unchecked<1>();
 
-    ssize_t nv = mesh.number_of_vertices();
-    py::array_t<double, py::array::c_style> vdata({nv});
-    auto r = vdata.mutable_unchecked<1>();
-
-    size_t i = 0;
-    for (V v : mesh.vertices()) {
-        r(i) = pmap[v];
-        i++;
+    for (size_t i = 0; i < nk; i++) {
+        r(i) = pmap[keys[i]];
     }
-    return vdata;
+    return vals;
 }
 
-py::array_t<double> face_property(const Mesh& mesh, const std::string& name) {
-    Mesh::Property_map<F, double> pmap;
-    bool found;
-    std:tie(pmap, found) = mesh.property_map<F, double>(name);
-    if (!found) {
-        throw std::runtime_error("Unrecognized vertex property " + name);
-    }
+template <typename Key, typename Val>
+void set_property_value(Mesh::Property_map<Key, Val>& pmap, const Key& key, const Val val) {
+    pmap[key] = val;
+}
 
-    ssize_t nf = mesh.number_of_faces();
-    py::array_t<double, py::array::c_style> fdata({nf});
-    auto r = fdata.mutable_unchecked<1>();
-
-    size_t i = 0;
-    for (F f : mesh.faces()) {
-        r(i) = pmap[f];
-        i++;
+template <typename Key, typename Val>
+void set_property_values(
+        const Mesh::Property_map<Key, Val>& pmap, const std::vector<Key>& keys, const std::vector<Val>& vals)
+{
+    size_t nk = keys.size();
+    size_t nv = vals.size();
+    if (nk != nv) {
+        throw std::runtime_error("Key and value array sizes do not match");
     }
-    return fdata;
+    for (size_t i = 0; i < nk; i++) {
+        pmap[keys[i]] = vals[i];
+    }
 }
 
 
 void init_mesh(py::module &m) {
     py::class_<V>(m, "Vertex");
     py::class_<F>(m, "Face");
+
+    py::class_<Mesh::Property_map<V, ssize_t> >(m, "VertexIntProperty")
+        .def("__getitem__", [](const Mesh::Property_map<V, ssize_t> pmap, const V& vert) {
+            return get_property_value(pmap, vert);
+        })
+        .def("__getitem__", [](const Mesh::Property_map<V, ssize_t> pmap, const std::vector<V>& verts) {
+            return get_property_values(pmap, verts);
+        })
+        .def("__setitem__", [](Mesh::Property_map<V, ssize_t>& pmap, const V& vert, const ssize_t val) {
+            set_property_value(pmap, vert, val);
+        })
+        .def("__setitem__", [](Mesh::Property_map<V, ssize_t>& pmap, const std::vector<V>& verts, const std::vector<ssize_t>& vals) {
+            set_property_values(pmap, verts, vals);
+        })
+    ;
 
     py::class_<Mesh>(m, "Mesh")
         .def(py::init<>())
@@ -136,7 +123,7 @@ void init_mesh(py::module &m) {
             auto rv = verts_out.mutable_unchecked<2>();
             for (size_t i = 0; i < nv; i++) {
                 Point_3 p = verts[i];
-                for (size_t j = 0; j < 3; j++) {
+                for (auto j = 0; j < 3; j++) {
                     rv(i, j) = CGAL::to_double(p[j]);
                 }
             }
@@ -173,16 +160,8 @@ void init_mesh(py::module &m) {
             return faces;
         })
 
-        .def("add_vertex_property", &add_vertex_property)
-        .def("add_face_property", &add_face_property)
-        .def("vertex_properties", [](const Mesh& mesh) {
-            return mesh.properties<V>();
-        })
-        .def("face_properties", [](const Mesh& mesh) {
-            return mesh.properties<F>();
-        })
-        .def("vertex_property", &vertex_property)
-        .def("face_property", &face_property)
+        .def("add_vertex_property", &add_property_map<V, ssize_t>)
+
         .def("corefine", [](Mesh& mesh1, Mesh& mesh2){
             CGAL::Polygon_mesh_processing::corefine(mesh1, mesh2);
         })
