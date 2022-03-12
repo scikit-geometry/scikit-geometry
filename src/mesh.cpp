@@ -6,7 +6,8 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
 typedef CGAL::Surface_mesh<Point_3>                                 Mesh;
 typedef Mesh::Vertex_index                                          V;
@@ -46,34 +47,6 @@ void add_face_property(Mesh& mesh, std::string name, const py::array_t<double>& 
     for (F f : mesh.faces()) {
         prop_map[f] = vals_r(i);
         i++;
-    }
-}
-
-
-void build_mesh(Mesh& mesh, const py::array_t<double>& verts, const py::array_t<int>& faces) {
-    // Add vertices
-    auto v_r = verts.unchecked<2>();
-
-    if (v_r.shape(1) != 3) {
-        throw std::runtime_error("vertices need to be 3 dimensional");
-    }
-    const ssize_t nv = v_r.shape(0);
-    std::vector<V> vidxs;
-
-    for (ssize_t i = 0; i < nv; i++) {
-        V vi = mesh.add_vertex(Point_3(v_r(i, 0), v_r(i, 1), v_r(i, 2)));
-        vidxs.push_back(vi);
-    }
-
-    // Add faces
-    auto v_f = faces.unchecked<2>();
-    if (v_f.shape(1) != 3) {
-        throw std::runtime_error("vertices need to be 3 dimensional");
-    }
-
-    const ssize_t nf = v_f.shape(0);
-    for (ssize_t i = 0; i < nf; i++) {
-        mesh.add_face(vidxs[v_f(i, 0)], vidxs[v_f(i, 1)], vidxs[v_f(i, 2)]);
     }
 }
 
@@ -158,11 +131,61 @@ py::array_t<double> face_property(const Mesh& mesh, const std::string& name) {
 void init_mesh(py::module &m) {
     py::class_<Mesh>(m, "Mesh")
         .def(py::init<>())
-        .def(py::init([](const py::array_t<double> &verts, const py::array_t<int> &faces) {
-            Mesh *mesh = new Mesh;
-            build_mesh(*mesh, verts, faces);
+        .def(py::init([](
+                py::array_t<double> &verts,
+                std::vector<std::vector<size_t>>& faces,
+                const bool orient
+            ) {
+            // Convert verts to Point_3
+            auto v = verts.unchecked<2>();
+            if (v.shape(1) != 3) {
+                throw std::runtime_error("vertices need to be 3 dimensional");
+            }
+            const ssize_t nv = v.shape(0);
+            std::vector<Point_3> points;
+            points.reserve(nv);
+            for (ssize_t i = 0; i < nv; i++) {
+                points.emplace_back(Point_3(v(i, 0), v(i, 1), v(i, 2)));
+            }
+
+            if (orient) {
+                bool success = PMP::orient_polygon_soup(points, faces);
+                if (!success) {
+                    throw std::runtime_error("Polygon orientation failed");
+                }
+            }
+
+            Mesh mesh;
+            PMP::polygon_soup_to_polygon_mesh(points, faces, mesh);
             return mesh;
         }))
+        .def("to_polygon_soup", [](const Mesh& mesh) {
+            std::vector<Point_3> verts;
+            std::vector<std::vector<size_t>> faces;
+            PMP::polygon_mesh_to_polygon_soup(mesh, verts, faces);
+
+            // convert points to arrays
+            const size_t nv = mesh.number_of_vertices();
+            py::array_t<double, py::array::c_style> verts_out({nv, size_t(3)});
+            auto rv = verts_out.mutable_unchecked<2>();
+            for (size_t i = 0; i < nv; i++) {
+                Point_3 p = verts[i];
+                for (size_t j = 0; j < 3; j++) {
+                    rv(i, j) = CGAL::to_double(p[j]);
+                }
+            }
+
+            // ditto faces
+            const size_t nf = mesh.number_of_faces();
+            py::array_t<size_t, py::array::c_style> faces_out({nf, size_t(3)});
+            auto rf = faces_out.mutable_unchecked<2>();
+            for (size_t i = 0; i < nf; i++) {
+                for (size_t j = 0; j < 3; j++) {
+                    rf(i, j) = faces[i][j];
+                }
+            }
+            return std::make_tuple(verts_out, faces_out);
+        })
         .def("vertices", &vertices)
         .def("faces", &faces)
         .def("add_vertex_property", &add_vertex_property)
