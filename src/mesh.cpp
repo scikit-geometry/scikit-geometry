@@ -9,6 +9,8 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
+#include <CGAL/Surface_mesh/IO/OFF.h>
 
 typedef CGAL::Surface_mesh<Point_3>                                 Mesh;
 typedef Mesh::Vertex_index                                          V;
@@ -84,6 +86,13 @@ void init_mesh(py::module &m) {
 
     py::class_<Mesh>(m, "Mesh")
         .def(py::init<>())
+        .def(py::init([](const std::string& file) {
+            Mesh mesh;
+            if(!CGAL::IO::read_polygon_mesh(file, mesh)) {
+                throw std::runtime_error("Failed to load mesh");
+            }
+            return mesh;
+        }))
         .def(py::init([](
                 py::array_t<double> &verts,
                 std::vector<std::vector<size_t>>& faces,
@@ -188,6 +197,21 @@ void init_mesh(py::module &m) {
                 throw std::runtime_error("Boolean operation failed.");
             }
             return result;
+        })
+        .def("write_ply", [](Mesh& mesh, std::string file) {
+            std::ofstream out(file, std::ios::binary);
+            CGAL::IO::set_binary_mode(out);
+            bool success = CGAL::IO::write_PLY(out, mesh, "", PMP::parameters::all_default());
+            if (!success) {
+                throw std::runtime_error("writing failed");
+            }
+        })
+        .def("write_off", [](Mesh& mesh, std::string file) {
+            std::ofstream out(file);
+            bool success = CGAL::IO::write_OFF(out, mesh, PMP::parameters::all_default());
+            if (!success) {
+                throw std::runtime_error("writing failed");
+            }
         })
     ;
 
