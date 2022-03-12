@@ -1,7 +1,11 @@
 import pytest
+import os
+
+from tempfile import TemporaryDirectory
+from numpy import array, cos, sin,  pi, ones, arange
+from numpy.testing import assert_array_equal
 
 from skgeom import Mesh
-from numpy import array, cos, sin,  pi
 
 
 def tetrahedron(scale=1.0, rot_z=0.0):
@@ -16,20 +20,47 @@ def tetrahedron(scale=1.0, rot_z=0.0):
     return verts, faces
 
 
-def test_simple_mesh():
-    verts, faces = tetrahedron()
-    _mesh = Mesh(verts, faces)
+@pytest.fixture
+def mesh():
+    return Mesh(*tetrahedron(), True)
+
+
+def test_scalar_property(mesh):
+    v = mesh.vertices[0]
+    pmap = mesh.add_vertex_property('foo', -1)
+    assert pmap[v] == -1
+    pmap[v] = 1
+    assert pmap[v] == 1
+    assert pmap[mesh.vertices[1]] == -1
+
+
+def test_vector_property(mesh):
+    verts = mesh.vertices
+    pmap = mesh.add_vertex_property('foo', 1)
+    assert_array_equal(pmap[verts], ones(mesh.n_vertices))
+
+    vals = arange(mesh.n_vertices)
+    pmap[verts] = vals
+    assert_array_equal(pmap[verts], vals)
+
+
+@pytest.mark.parametrize('ext', ('off', 'ply'))
+def test_io(mesh, ext):
+    with TemporaryDirectory() as d:
+        file = os.path.join(d, 'mesh.' + ext)
+        getattr(mesh, 'write_' + ext)(file)
+        _ = Mesh(file)
 
 
 def test_corefine():
-    m0 = Mesh(*tetrahedron())
-    m1 = Mesh(*tetrahedron(scale=0.9,  rot_z=pi/3))
+    m0 = Mesh(*tetrahedron(), True)
+    m1 = Mesh(*tetrahedron(scale=0.9,  rot_z=pi/3), True)
     m0.corefine(m1)
 
 
 @pytest.mark.parametrize('op', ['difference', 'union', 'intersection'])
 def test_binary_op(op):
-    m0 = Mesh(*tetrahedron())
-    m1 = Mesh(*tetrahedron(scale=0.9, rot_z=pi / 3))
+    m0 = Mesh(*tetrahedron(), True)
+    m1 = Mesh(*tetrahedron(scale=0.9, rot_z=pi / 3), True)
     result = getattr(m0, op)(m1)
     assert isinstance(result, Mesh)
