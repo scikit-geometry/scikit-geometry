@@ -50,43 +50,6 @@ void add_face_property(Mesh& mesh, std::string name, const py::array_t<double>& 
     }
 }
 
-
-py::array_t<double> vertices(const Mesh& mesh) {
-    size_t nv = mesh.number_of_vertices();
-    py::array_t<double, py::array::c_style> verts({nv, size_t(3)});
-    auto r = verts.mutable_unchecked<2>();
-
-    size_t i = 0;
-    for (V v : mesh.vertices()) {
-        Point_3 p = mesh.point(v);
-        r(i, 0) = CGAL::to_double(p[0]);
-        r(i, 1) = CGAL::to_double(p[1]);
-        r(i, 2) = CGAL::to_double(p[2]);
-        i++;
-    }
-    assert(i == nv);
-    return verts;
-}
-
-
-py::array_t<int> faces(const Mesh& mesh) {
-    size_t nf = mesh.number_of_faces();
-    py::array_t<int, py::array::c_style> faces({nf, size_t(3)});
-    auto r = faces.mutable_unchecked<2>();
-
-    size_t i = 0;
-    for (Mesh::Face_index f : mesh.faces()) {
-        size_t j = 0;
-        for(V v : vertices_around_face(mesh.halfedge(f), mesh)){
-            r(i, j) = v;
-            j++;
-        }
-        i++;
-    }
-
-    return faces;
-}
-
 py::array_t<double> vertex_property(const Mesh& mesh, const std::string& name) {
     Mesh::Property_map<V, double> pmap;
     bool found;
@@ -129,6 +92,9 @@ py::array_t<double> face_property(const Mesh& mesh, const std::string& name) {
 
 
 void init_mesh(py::module &m) {
+    py::class_<V>(m, "Vertex");
+    py::class_<F>(m, "Face");
+
     py::class_<Mesh>(m, "Mesh")
         .def(py::init<>())
         .def(py::init([](
@@ -186,8 +152,27 @@ void init_mesh(py::module &m) {
             }
             return std::make_tuple(verts_out, faces_out);
         })
-        .def("vertices", &vertices)
-        .def("faces", &faces)
+
+        .def_property_readonly("n_vertices", [](const Mesh& mesh) { return mesh.number_of_vertices(); })
+        .def_property_readonly("n_faces", [](const Mesh& mesh) { return mesh.number_of_faces(); })
+
+        .def_property_readonly("vertices", [](const Mesh& mesh) {
+            std::vector<V> verts;
+            verts.reserve(mesh.number_of_vertices());
+            for (V v : mesh.vertices()) {
+                verts.emplace_back(v);
+            }
+            return verts;
+        })
+        .def_property_readonly("faces", [](const Mesh& mesh) {
+            std::vector<F> faces;
+            faces.reserve(mesh.number_of_faces());
+            for (F f : mesh.faces()) {
+                faces.emplace_back(f);
+            }
+            return faces;
+        })
+
         .def("add_vertex_property", &add_vertex_property)
         .def("add_face_property", &add_face_property)
         .def("vertex_properties", [](const Mesh& mesh) {
