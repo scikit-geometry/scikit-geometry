@@ -8,12 +8,13 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 typedef CGAL::Surface_mesh<Point_3>                                 Mesh;
 typedef Mesh::Vertex_index                                          V;
 typedef Mesh::Face_index                                            F;
-typedef std::map<std::string, py::array_t<double>&>                 NamedProps;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Key, typename Val>
 Mesh::Property_map<Key, Val> add_property_map (Mesh& mesh, std::string name, const Val default_val) {
@@ -61,7 +62,6 @@ void set_property_values(
         pmap[keys[i]] = vals[i];
     }
 }
-
 
 void init_mesh(py::module &m) {
     py::class_<V>(m, "Vertex");
@@ -163,21 +163,30 @@ void init_mesh(py::module &m) {
         .def("add_vertex_property", &add_property_map<V, ssize_t>)
 
         .def("corefine", [](Mesh& mesh1, Mesh& mesh2){
-            CGAL::Polygon_mesh_processing::corefine(mesh1, mesh2);
+            PMP::corefine(mesh1, mesh2);
         })
         .def("difference", [](Mesh& mesh1, Mesh& mesh2) {
-            Mesh *result = new Mesh;
-            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_difference(mesh1, mesh2, *result);
+            Mesh result;
+            bool success = PMP::corefine_and_compute_difference(mesh1, mesh2, result);
+            if (!success) {
+                throw std::runtime_error("Boolean operation failed.");
+            }
             return result;
         })
         .def("union", [](Mesh& mesh1, Mesh& mesh2) {
-            Mesh *result = new Mesh;
-            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_union(mesh1, mesh2, *result);
+            Mesh result;
+            bool success = PMP::corefine_and_compute_union(mesh1, mesh2, result);
+            if (!success) {
+                throw std::runtime_error("Boolean operation failed.");
+            }
             return result;
         })
         .def("intersection", [](Mesh& mesh1, Mesh& mesh2) {
-            Mesh *result = new Mesh;
-            bool ok = CGAL::Polygon_mesh_processing::corefine_and_compute_union(mesh1, mesh2, *result);
+            Mesh result;
+            bool success = CGAL::Polygon_mesh_processing::corefine_and_compute_union(mesh1, mesh2, result);
+            if (!success) {
+                throw std::runtime_error("Boolean operation failed.");
+            }
             return result;
         })
     ;
