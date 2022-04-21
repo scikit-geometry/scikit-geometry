@@ -25,8 +25,9 @@ include_dirs = [
     get_pybind_include(user=True),
 ]
 
-library_dirs = None
+library_dirs = []
 cgal_libs = ["CGAL", "CGAL_Core"]
+boost_mt = False
 
 conda_prefix = os.getenv('CONDA_PREFIX')
 if not conda_prefix:
@@ -40,6 +41,8 @@ if conda_prefix:
         include_dirs.append(os.path.join(conda_prefix, 'Library', 'include'))
 elif os.path.exists('/usr/include/CGAL/'):
     cgal_include = '/usr/include/CGAL/'
+elif os.path.exists('/opt/homebrew/include/CGAL/'):
+    cgal_include = '/opt/homebrew/include/CGAL/'
 else:
     cgal_include = '/usr/local/include/CGAL/'
 
@@ -97,10 +100,13 @@ if conda_prefix:
     if cgal_version < (5, 0):
         include_dirs.insert(1, os.path.join(prefix, 'include'))
 
-if sys.platform == 'darwin' and glob.glob('/usr/local/lib/libboost*-mt*'):
-    boost_mt = True
-else:
-    boost_mt = False
+if sys.platform == 'darwin':
+    boost_mt = bool(
+        glob.glob('/usr/local/lib/libboost*-mt*') +
+        glob.glob('/opt/homebrew/lib/libboost*-mt*')
+    )
+    include_dirs += ['/usr/local/include', '/opt/homebrew/include']
+    library_dirs += ['/usr/local/lib', '/opt/homebrew/lib']
 
 ext_modules = [
     Extension(
