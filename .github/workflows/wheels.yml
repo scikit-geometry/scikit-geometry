@@ -54,12 +54,12 @@ jobs:
     - uses: pypa/cibuildwheel@v2.4.0
       env:
         CIBW_BUILD: cp38-manylinux_x86_64
-        CIBW_BEFORE_BUILD_LINUX: yum -y update && yum -y install gmp-devel
+        CIBW_BEFORE_BUILD_LINUX: yum -y update && yum -y install gmp-devel mpfr-devel
         # CIBW_ARCHS_MACOS: auto universal2
 
-    - name: Verify clean directory
-      run: git diff --exit-code
-      shell: bash
+    # - name: Verify clean directory
+    #   run: git diff --exit-code
+    #   shell: bash
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
