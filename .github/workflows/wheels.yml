@@ -1,14 +1,6 @@
 name: Wheels
 
-on:
-  workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-     - master
-  release:
-    types:
-      - published
+on: [push]
 
 jobs:
   build_sdist:
