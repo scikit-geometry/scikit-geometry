@@ -135,11 +135,12 @@ ext_modules = [
         library_dirs=library_dirs,
         libraries=cgal_libs + ['mpfr',
                    'gmp', 
-                   'boost_thread-mt' if boost_mt else 'boost_thread',
-                   'boost_atomic-mt' if boost_mt else 'boost_atomic',
-                   'boost_system',
-                   'boost_date_time',
-                   'boost_chrono'],
+                #    'boost_thread-mt' if boost_mt else 'boost_thread',
+                #    'boost_atomic-mt' if boost_mt else 'boost_atomic',
+                #    'boost_system',
+                #    'boost_date_time',
+                #    'boost_chrono'
+                   ],
         language='c++'
     ),
 ]
