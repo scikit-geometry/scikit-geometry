@@ -4,8 +4,8 @@ name: Build wheels
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
 
 jobs:
   build_sdist:
