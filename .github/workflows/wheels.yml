@@ -54,7 +54,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.4.0
       env:
         CIBW_BUILD: cp38-manylinux_x86_64
-        CIBW_BEFORE_BUILD_LINUX: yum install libgmp3-dev
+        CIBW_BEFORE_BUILD_LINUX: yum install gmp-devel
         # CIBW_ARCHS_MACOS: auto universal2
 
     - name: Verify clean directory
