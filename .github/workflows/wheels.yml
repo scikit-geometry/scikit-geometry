@@ -43,6 +43,12 @@ jobs:
         wget -nv https://github.com/CGAL/cgal/releases/download/v5.4/CGAL-5.4.tar.xz
         tar -xf CGAL-5.4.tar.xz CGAL-5.4/include/
         mv CGAL-5.4/include/CGAL $GITHUB_WORKSPACE/include/
+
+    - name: Setup boost dependencies
+      run: |
+        wget -nv https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2 -O boost_1_79_0.tar.bz2
+        tar --bzip2 -xf boost_1_79_0.tar.bz2 boost_1_79_0/boost/
+        mv boost_1_79_0/boost $GITHUB_WORKSPACE/include/
         ls -l $GITHUB_WORKSPACE/include/
 
     - uses: pypa/cibuildwheel@v2.4.0
