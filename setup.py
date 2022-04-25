@@ -139,8 +139,7 @@ ext_modules = [
                    'boost_atomic-mt' if boost_mt else 'boost_atomic',
                    'boost_system',
                    'boost_date_time',
-                   'boost_chrono'
-                   ],
+                   'boost_chrono'],
         language='c++'
     ),
 ]
