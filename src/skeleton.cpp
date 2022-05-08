@@ -1,16 +1,22 @@
-#include "skgeom.hpp"
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_2.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+#define KERNEL_PRESCRIBED
 
 typedef CGAL::Straight_skeleton_2<Kernel> Skeleton_2;
 typedef std::shared_ptr<Skeleton_2>       Skeleton_2_Ref;
 
 typedef Skeleton_2::Vertex_const_iterator VertexConstIterator;
 typedef Skeleton_2::Halfedge_const_iterator HalfedgeConstIterator;
+typedef Skeleton_2::Face_const_iterator FaceConstIterator;
 
 typedef CGAL::HalfedgeDS_in_place_list_vertex<Skeleton_2::Vertex> Skeleton_2_Vertex;
 typedef CGAL::HalfedgeDS_in_place_list_halfedge<Skeleton_2::Halfedge> Skeleton_2_Halfedge;
+typedef CGAL::HalfedgeDS_in_place_list_face<Skeleton_2::Face> Skeleton_2_Face;
+
+#include "skgeom.hpp"
 
 template<typename T>
 std::shared_ptr<T> to_std(boost::shared_ptr<T> ptr) {
@@ -72,6 +78,9 @@ typedef SafeValue<Skeleton_2_Ref, Skeleton_2_Vertex>                            
 typedef SafeIterator<Skeleton_2_Ref, HalfedgeConstIterator, Skeleton_2_Halfedge> Safe_Skeleton_2_Halfedge_Iterator;
 typedef SafeValue<Skeleton_2_Ref, Skeleton_2_Halfedge>                           Safe_Skeleton_2_Halfedge;
 
+typedef SafeIterator<Skeleton_2_Ref, FaceConstIterator, Skeleton_2_Face> Safe_Skeleton_2_Face_Iterator;
+typedef SafeValue<Skeleton_2_Ref, Skeleton_2_Face>                       Safe_Skeleton_2_Face;
+
 void init_skeleton(py::module & m) {
 	py::module sub = m.def_submodule("skeleton");
 
@@ -85,6 +94,11 @@ void init_skeleton(py::module & m) {
             return py::make_iterator(
 				Safe_Skeleton_2_Halfedge_Iterator(s, s->halfedges_begin()),
 				Safe_Skeleton_2_Halfedge_Iterator(s, s->halfedges_end()));
+        })
+        .def_property_readonly("faces", [](const Skeleton_2_Ref &s) {
+            return py::make_iterator(
+				Safe_Skeleton_2_Face_Iterator(s, s->faces_begin()),
+				Safe_Skeleton_2_Face_Iterator(s, s->faces_end()));
         })
 		.def("offset_polygons", [](const Skeleton_2_Ref &s, double offset) -> py::list {
 			py::list r;
@@ -122,6 +136,11 @@ void init_skeleton(py::module & m) {
 		})
 		.def_property_readonly("is_bisector", [](const Safe_Skeleton_2_Halfedge &h) {
 			return h->is_bisector();
+		});
+
+	py::class_<Safe_Skeleton_2_Face>(m, "SkeletonFace")
+		.def_property_readonly("halfedge", [](const Safe_Skeleton_2_Face &h) {
+			return Safe_Skeleton_2_Halfedge{h.owner, *h->halfedge()};
 		});
 
 	sub.def("create_interior_straight_skeleton", [](

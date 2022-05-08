@@ -1,11 +1,14 @@
-#include "skgeom.hpp"
-#include "funcs.hpp"
-
 #include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
+#define KERNEL_PRESCRIBED
+
+#include "skgeom.hpp"
+#include "funcs.hpp"
 
 typedef Segment_Arrangement_2::Ccb_halfedge_circulator          Ccb_halfedge_circulator;
 typedef Segment_Arrangement_2::Isolated_vertex_iterator         Isolated_vertex_iterator;

@@ -16,8 +16,12 @@ std::vector<Segment_2> get_edges(Polygon_2 p) {
 	return result;
 }
 
-CGAL::Bounded_side on_side(Polygon_2& poly, Point_2& point) {
+CGAL::Bounded_side on_side(Polygon_2& poly, const Point_2& point) {
     return CGAL::bounded_side_2(poly.vertices_begin(), poly.vertices_end(), point, Kernel());
+}
+
+CGAL::Bounded_side on_side(Polygon_2& poly, const double px, const double py) {
+    return CGAL::bounded_side_2(poly.vertices_begin(), poly.vertices_end(), Point_2(px, py), Kernel());
 }
 
 Point_2 centroid(Polygon_2& poly) {
@@ -76,6 +80,9 @@ void init_polygon(py::module &m) {
     	.def("bbox", &Polygon_2::bbox)
     	.def("area", &Polygon_2::area)
         .def("oriented_side", &Polygon_2::oriented_side)
+        .def("on_side", py::overload_cast<Polygon_2&, const Point_2&>(&on_side))
+        .def("on_side", py::overload_cast<Polygon_2&, const double, const double>(&on_side))
+        .def("on_side", py::vectorize(py::overload_cast<Polygon_2&, const double, const double>(&on_side)))
         .def("__repr__", &toString<Polygon_2>)
         .def("_ipython_display_", [](Polygon_2& s) {
             py::module::import("skgeom.draw").attr("draw_polygon")(

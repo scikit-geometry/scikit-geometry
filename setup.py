@@ -18,14 +18,16 @@ class get_pybind_include(object):
         return pybind11.get_include(self.user)
 
 include_dirs = [
+    "./include/",
+    "./src/docs/",
     # Path to pybind11 headers
-    './include/',
     get_pybind_include(),
-    get_pybind_include(user=True)
+    get_pybind_include(user=True),
 ]
 
-library_dirs = None
+library_dirs = []
 cgal_libs = ["CGAL", "CGAL_Core"]
+boost_mt = False
 
 conda_prefix = os.getenv('CONDA_PREFIX')
 if not conda_prefix:
@@ -37,6 +39,10 @@ if conda_prefix:
     if not os.path.exists(cgal_include):
         cgal_include = os.path.join(conda_prefix, 'Library', 'include', 'CGAL')
         include_dirs.append(os.path.join(conda_prefix, 'Library', 'include'))
+elif os.path.exists('/usr/include/CGAL/'):
+    cgal_include = '/usr/include/CGAL/'
+elif os.path.exists('/opt/homebrew/include/CGAL/'):
+    cgal_include = '/opt/homebrew/include/CGAL/'
 else:
     cgal_include = '/usr/local/include/CGAL/'
 
@@ -74,7 +80,7 @@ if conda_prefix:
         library_dir = os.path.join(prefix, 'lib')
 
         if cgal_version < (5, 0):
-            # currently we also need to add the apparently windows specific suffix here, it's unclear if this is 
+            # currently we also need to add the apparently windows specific suffix here, it's unclear if this is
             # necessary if CGAL is installed not from CONDA.
             # suffix = "-vc140-mt-4.14.1"
             adjusted_cgal_libs = []
@@ -94,10 +100,13 @@ if conda_prefix:
     if cgal_version < (5, 0):
         include_dirs.insert(1, os.path.join(prefix, 'include'))
 
-if sys.platform == 'darwin' and glob.glob('/usr/local/lib/libboost*-mt*'):
-    boost_mt = True
-else:
-    boost_mt = False
+if sys.platform == 'darwin':
+    boost_mt = bool(
+        glob.glob('/usr/local/lib/libboost*-mt*') +
+        glob.glob('/opt/homebrew/lib/libboost*-mt*')
+    )
+    include_dirs += ['/usr/local/include', '/opt/homebrew/include']
+    library_dirs += ['/usr/local/lib', '/opt/homebrew/lib']
 
 ext_modules = [
     Extension(
@@ -220,8 +229,11 @@ setup(
     description='scikit-geometry, the python computational geometry library',
     long_description='',
     ext_modules=ext_modules,
-    install_requires=['pybind11>=2.3'],
-    setup_requires=['pybind11>=2.3'],
+    install_requires=['pybind11>=2.3,<2.8', 'numpy'],
+    setup_requires=['pybind11>=2.3,<2.8'],
+    extras_require={
+        "drawing": ["matplotlib"],
+    },
     cmdclass={'build_ext': BuildExt},
     zip_safe=False,
     packages=['skgeom'],

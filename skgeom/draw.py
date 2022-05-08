@@ -1,7 +1,10 @@
-from matplotlib import pyplot as plt
-from matplotlib import cm
-import matplotlib.patches as patches
-from matplotlib.path import Path
+try:
+    from matplotlib import pyplot as plt
+    from matplotlib import cm
+    import matplotlib.patches as patches
+    from matplotlib.path import Path
+except ImportError:
+    raise ImportError("The `matplotlib` package is required by the skgeom.draw module.")
 
 import skgeom
 

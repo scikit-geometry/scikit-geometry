@@ -22,9 +22,7 @@
 
 namespace py = pybind11;
 
-#if ((CGAL_VERSION_MAJOR >= 5) && (CGAL_VERSION_MINOR >= 2)) || (CGAL_VERSION_MAJOR > 5)
-typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
-#else
+#ifndef KERNEL_PRESCRIBED
 typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 #endif
 
