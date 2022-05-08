@@ -30,6 +30,7 @@ typedef CGAL::Cartesian_converter<Kernel,Rat_kernel>    Kernel_to_Rational;
 
 typedef PySequenceCirculator<Ccb_halfedge_circulator> PyCcbHalfedgeCirculator;
 
+
 void insert_segments_in_arr(Segment_Arrangement_2& arr, std::vector<Segment_2>& segs) {
 	try{
     CGAL::insert(arr, segs.begin(), segs.end());
@@ -209,6 +210,13 @@ void init_arrangement(py::module &m) {
         .def("remove_edge", &remove_edge_from_arr)
         .def("find", &find_in_arrangement)
     ;
+
+		py::class_<Vertex_index_map>(m, "VertexIndexMap")
+        .def(py::init<const Segment_Arrangement_2&>())
+			  .def("vertex_index", [](Vertex_index_map& index_map, Vertex_handle vertex){
+            return index_map[vertex];
+        })
+		;
 
     py::class_<Vertex, Vertex_handle>(sub, "Vertex")
         .def("point", [](Vertex& self) { return self.point(); })

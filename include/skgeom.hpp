@@ -12,6 +12,7 @@
 #include <CGAL/connect_holes.h>
 #include <CGAL/centroid.h>
 #include <CGAL/version.h>
+#include <CGAL/Arr_vertex_index_map.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
@@ -86,6 +87,7 @@ typedef Segment_Arrangement_2::Face_const_handle                        Face_con
 typedef Segment_Arrangement_2::Halfedge                                 Halfedge;
 typedef Segment_Arrangement_2::Face                                     Face;
 typedef Segment_Arrangement_2::Hole_iterator                            Hole_iterator;
+typedef CGAL::Arr_vertex_index_map<Segment_Arrangement_2>                   Vertex_index_map;
 
 
 #define CGAL_HOLDER_HELPER(T, H)                                            \
