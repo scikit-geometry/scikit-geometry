@@ -116,6 +116,7 @@ void init_skgeom_kernel(py::module &m) {
         .def("hy", &Vector_2::hy)
         .def("hw", &Vector_2::hw)
         .def("transform", &Vector_2::transform)
+        .def("dimension", &Vector_2::dimension)
         .def(-py::self)
         .def(py::self * double())
         .def(double() * py::self)
@@ -574,6 +575,23 @@ void init_skgeom_kernel(py::module &m) {
         .def("second_point", &Ray_3::second_point)
         .def(py::self == py::self)
         .def(py::self != py::self)
+    ;
+
+    py::class_<Direction_3>(m, "Direction3")
+        .def(py::init<Vector_3>())
+        .def(py::init<Line_3>())
+        .def(py::init<Ray_3>())
+        .def(py::init<Segment_3>())
+        .def(py::init<double, double, double>())
+        .def("to_vector", &Direction_3::to_vector)
+        .def("delta", &Direction_3::delta)
+        .def("dx", &Direction_3::dx)
+        .def("dy", &Direction_3::dy)
+        .def("dz", &Direction_3::dz)
+        .def(-py::self)
+        .def(py::self == Direction_3())
+        .def(py::self != Direction_3())
+        .def("__repr__", &toString<Direction_3>)
     ;
 
     py::class_<Triangle_3>(m, "Triangle3")
