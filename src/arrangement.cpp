@@ -31,12 +31,21 @@ typedef CGAL::Cartesian_converter<Kernel,Rat_kernel>    Kernel_to_Rational;
 typedef PySequenceCirculator<Ccb_halfedge_circulator> PyCcbHalfedgeCirculator;
 
 
+void insert_indexed_segment_in_arr(Indexed_Segment_Arrangement_2& self, Segment_2& segment, int index) {
+	try{
+    CGAL::insert(self, IndexedSegment(segment, index));
+	} catch (CGAL::Precondition_exception)
+	{
+		//std::cout << "CGAL precondition violation in insert segments\n";
+	}
+}
+
 void insert_segments_in_arr(Segment_Arrangement_2& arr, std::vector<Segment_2>& segs) {
 	try{
     CGAL::insert(arr, segs.begin(), segs.end());
 	} catch (CGAL::Precondition_exception)
 	{
-		std::cout << "CGAL precondition violation in insert segment\n";
+		//std::cout << "CGAL precondition violation in insert segment\n";
 	}
 }
 void insert_segment_in_arr(Segment_Arrangement_2& self, Segment_2& segment) {
@@ -44,7 +53,7 @@ void insert_segment_in_arr(Segment_Arrangement_2& self, Segment_2& segment) {
     CGAL::insert(self, segment);
 	} catch (CGAL::Precondition_exception)
 	{
-		std::cout << "CGAL precondition violation in insert segments\n";
+		//std::cout << "CGAL precondition violation in insert segments\n";
 	}
 }
 
@@ -153,7 +162,7 @@ namespace skgeom
         return cast(state{first});
     }
 
-    template <return_value_policy Policy = return_value_policy::reference_internal,
+	template <return_value_policy Policy = return_value_policy::reference_internal,
               typename Iterator,
               typename Sentinel,
               typename... Extra>
@@ -178,6 +187,32 @@ namespace skgeom
 
         return cast(state{first, last, true});
     }
+
+    template <return_value_policy Policy = return_value_policy::reference_internal,
+              typename Iterator,
+              typename Sentinel,
+              typename... Extra>
+    iterator indexed_make_hole_iterator(Iterator first, Sentinel last, Extra &&... extra) {
+        typedef detail::iterator_state<Iterator, Sentinel, false, Policy> state;
+
+        if (!detail::get_type_info(typeid(state), false)) {
+            class_<state>(handle(), "iterator", pybind11::module_local())
+                .def("__iter__", [](state &s) -> state& { return s; })
+                .def("__next__", [](state &s) {
+                    if (!s.first_or_done)
+                        ++s.it;
+                    else
+                        s.first_or_done = false;
+                    if (s.it == s.end) {
+                        s.first_or_done = true;
+                        throw stop_iteration();
+                    }
+                    return skgeom::make_circulator<Policy, IHalfedge_handle>(*s.it);
+                }, std::forward<Extra>(extra)..., Policy);
+        }
+
+        return cast(state{first, last, true});
+    }
 }
 
 void init_arrangement(py::module &m) {
@@ -194,8 +229,8 @@ void init_arrangement(py::module &m) {
         .def_property_readonly("vertices", [](Segment_Arrangement_2& s) {
            return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, Vertex_handle>(s.vertices_begin(), s.vertices_end());
         }, py::keep_alive<0, 1>())
-        .def("insert_non_intersecting_curve", &insert_non_intersecting_curve_in_arr)
-        .def("insert_non_intersecting_curves", &insert_non_intersecting_curves_in_arr)
+        // .def("insert_non_intersecting_curve", &insert_non_intersecting_curve_in_arr)
+        // .def("insert_non_intersecting_curves", &insert_non_intersecting_curves_in_arr)
         .def("insert", &insert_segment_in_arr)
         .def("insert", &insert_segments_in_arr)
         .def("unbounded_face", static_cast<Face_handle (Segment_Arrangement_2::*)()>(&Segment_Arrangement_2::unbounded_face))
@@ -211,7 +246,7 @@ void init_arrangement(py::module &m) {
         .def("find", &find_in_arrangement)
     ;
 
-		py::class_<Vertex_index_map>(m, "VertexIndexMap")
+		py::class_<Vertex_index_map>(sub, "VertexIndexMap")
         .def(py::init<const Segment_Arrangement_2&>())
 			  .def("vertex_index", [](Vertex_index_map& index_map, Vertex_handle vertex){
             return index_map[vertex];
@@ -291,4 +326,90 @@ void init_arrangement(py::module &m) {
 //      .def("y", &Rat_point_2::y)
 //      .def("__repr__", &toString<Rat_point_2>)
 //     ;
+}
+
+void init_indexed_arrangement(py::module &m) {
+    py::module sub = m.def_submodule("indexed_arrangement");
+
+    py::class_<Indexed_Segment_Arrangement_2>(sub, "Arrangement")
+        .def(py::init<>())
+        .def_property_readonly("halfedges", [](Indexed_Segment_Arrangement_2& s) {
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, IHalfedge_handle>(s.halfedges_begin(), s.halfedges_end());
+        }, py::keep_alive<0, 1>())
+        .def_property_readonly("faces", [](Indexed_Segment_Arrangement_2& s) {
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, IFace_handle>(s.faces_begin(), s.faces_end());
+        }, py::keep_alive<0, 1>())
+        .def_property_readonly("vertices", [](Indexed_Segment_Arrangement_2& s) {
+           return skgeom::make_handle_iterator<py::return_value_policy::reference_internal, IVertex_handle>(s.vertices_begin(), s.vertices_end());
+        }, py::keep_alive<0, 1>())
+        // .def("insert_non_intersecting_curve", &insert_non_intersecting_curve_in_arr)
+        // .def("insert_non_intersecting_curves", &insert_non_intersecting_curves_in_arr)
+        .def("insert", &insert_indexed_segment_in_arr)
+
+        .def("unbounded_face", static_cast<IFace_handle (Indexed_Segment_Arrangement_2::*)()>(&Indexed_Segment_Arrangement_2::unbounded_face))
+        // .def("insert_from_left_vertex", &Segment_Arrangement_2::insert_from_left_vertex)
+        // .def("insert_from_right_vertex", &Segment_Arrangement_2::insert_from_right_vertex)
+        // .def("insert_in_face_interior", &Segment_Arrangement_2::insert_in_face_interior)
+        // .def("insert_at_vertices", &Segment_Arrangement_2::insert_at_vertices)
+        // .def("split_edge", &Segment_Arrangement_2::split_edge)
+        .def("address", [](Indexed_Segment_Arrangement_2& self) { std::cout << (void*) &self << std::endl; })
+    ;
+
+		py::class_<IVertex_index_map>(sub, "VertexIndexMap")
+        .def(py::init<const Indexed_Segment_Arrangement_2&>())
+			  .def("vertex_index", [](IVertex_index_map& index_map, IVertex_handle vertex){
+            return index_map[vertex];
+        })
+		;
+
+    py::class_<IVertex, IVertex_handle>(sub, "Vertex")
+			  .def("point", [](IVertex& self) { return self.point(); })
+        .def_property_readonly("incident_halfedges", [](IVertex& self) {
+            return skgeom::make_circulator<py::return_value_policy::reference_internal, IHalfedge_handle>(self.incident_halfedges());
+        }, py::keep_alive<0, 1>())
+    ;
+
+    py::class_<IHalfedge, IHalfedge_handle>(sub, "Halfedge")
+        .def("prev", static_cast<IHalfedge_handle (IHalfedge::*)()>(&IHalfedge::prev))
+        .def("next", static_cast<IHalfedge_handle (IHalfedge::*)()>(&IHalfedge::next))
+        .def("twin", static_cast<IHalfedge_handle (IHalfedge::*)()>(&IHalfedge::twin))
+        .def("source", static_cast<IVertex_handle (IHalfedge::*)()>(&IHalfedge::source))
+        .def("target", static_cast<IVertex_handle (IHalfedge::*)()>(&IHalfedge::target))
+        .def("curve", [](IHalfedge& he) -> Segment_2 {
+            return he.curve();
+        })
+			  .def("segment_index", [](IHalfedge& he) -> int {
+					if (he.curve().data().size() > 0) { // Nb overlapping segments will give multiple segment indices
+                return he.curve().data().front();
+					 }
+					 return -1; })
+			.def("segment_indices", [](IHalfedge& he) -> std::vector<int> {
+					std::vector<int> inds;
+					for (auto i: he.curve().data()){
+						inds.push_back(i);
+					}
+					return inds;
+					})
+        .def("face", static_cast<IFace_handle (IHalfedge::*)()>(&IHalfedge::face))
+        // .def_property_readonly("ccb", [](Halfedge& self) {
+        //     return py::make_circulator(self.ccb());
+        // }, py::keep_alive<0, 1>())
+    ;
+
+    py::class_<IFace, IFace_handle>(sub, "Face")
+			  .def("is_unbounded", [](IFace & f) -> bool { return f.is_unbounded(); })
+        .def("has_outer_ccb", &IFace::has_outer_ccb)
+        .def("number_of_holes", &IFace::number_of_holes)
+        .def("number_of_isolated_vertices", [](IFace & f) -> int { return f.number_of_isolated_vertices(); })
+        .def_property_readonly("isolated_vertices", [](IFace& self) {
+            return py::make_iterator(self.isolated_vertices_begin(), self.isolated_vertices_end());
+        }, py::keep_alive<0, 1>())
+        .def_property_readonly("outer_ccb", [](IFace& self) {
+            return skgeom::make_circulator<py::return_value_policy::reference_internal, IHalfedge_handle>(self.outer_ccb());
+        }, py::keep_alive<0, 1>())
+        .def_property_readonly("holes", [](IFace& self) {
+            return skgeom::indexed_make_hole_iterator(self.holes_begin(), self.holes_end());
+        }, py::keep_alive<0, 1>())
+    ;
+
 }

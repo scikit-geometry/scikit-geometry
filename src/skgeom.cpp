@@ -18,6 +18,7 @@ void init_boolean_set(py::module&);
 void init_polygon_set(py::module&);
 void init_convex_hull(py::module&);
 void init_arrangement(py::module&);
+void init_indexed_arrangement(py::module&);
 void init_visibility(py::module&);
 void init_principal_component_analysis(py::module&);
 void init_minkowski(py::module&);
@@ -37,6 +38,7 @@ PYBIND11_MODULE(_skgeom, m) {
     init_global_functions(m);
     init_skgeom_kernel(m);
     init_arrangement(m);
+		init_indexed_arrangement(m);
     init_polygon(m);
     init_boolean_set(m);
     init_polygon_set(m);
