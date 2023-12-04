@@ -229,8 +229,8 @@ setup(
     description='scikit-geometry, the python computational geometry library',
     long_description='',
     ext_modules=ext_modules,
-    install_requires=['pybind11>=2.3,<2.8', 'numpy'],
-    setup_requires=['pybind11>=2.3,<2.8'],
+    install_requires=['pybind11>=2.8', 'numpy'],
+    setup_requires=['pybind11>=2.8'],
     extras_require={
         "drawing": ["matplotlib"],
     },
